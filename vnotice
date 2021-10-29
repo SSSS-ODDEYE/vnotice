@@ -1,34 +1,37 @@
 #!/bin/bash 
-VERSION="v1.0.0"
+VERSION="v1.0.1"
 
-file_name="vnotice"
-install_path=~/bin/
-link_path=/usr/bin/
-temp_file_name=$file_name.install
+FILE_NAME="vnotice"
+INSTALL_FILE_NAME=$FILE_NAME.install
+INSTALL_PATH=~/bin/
+LINK_PATH=/usr/bin/
 
-show_output="false"
-show_command="true"
-show_format="true"
-command_output=""
-job_start_time=`date`
-robot_id=$ROBOT_ID
+GITHUB_URL=https://github.com.cnpmjs.org/
+GITHUBAPI_URL=https://api.github.com/
+USER_REPO_NAME="Ohto-Ai/vnotice"
 
-github_url=https://github.com.cnpmjs.org/
-githubapi_url=https://api.github.com/
-repo_name="Ohto-Ai/vnotice"
+CURRENT_ROBOT_ID=$ROBOT_ID
+
+
+FLAG_ShowOutPut="false"
+FLAG_ShowCommand="true"
+FLAG_ShowFormat="true"
+MSG_CommandOutput="null"
+
+SELF_FILE=$0
 
 function query_latest_version()
 {
     pattern="tag_name"
-    json=`curl "${githubapi_url}repos/$repo_name/releases/latest" 2>/dev/null`
+    json=`curl "${GITHUBAPI_URL}repos/$USER_REPO_NAME/releases/latest" 2>/dev/null`
     echo $json | grep -Po "\"$pattern\":.*?[^\\\\]\","| perl -pe "s/\"$pattern\":\\s*//; s/^\"//; s/\",$//"
 }
 
 function download_version()
 {
     version=$1
-    echo -ne "\033[33mFile downloading [$file_name]...\033[0m\n"
-    wget -O $temp_file_name $github_url$repo_name/releases/download/$version/$file_name \
+    echo -ne "\033[33mFile downloading [$FILE_NAME]...\033[0m\n"
+    wget -O $INSTALL_FILE_NAME $GITHUB_URL$USER_REPO_NAME/releases/download/$version/$FILE_NAME \
     && success=0 || success=-1
     if [ $success == 0 ]; then
         echo -ne "Download \033[33msuccess\033[0m\n" 
@@ -40,7 +43,7 @@ function download_version()
 
 function check_install()
 {
-    if [ -L $link_path$file_name ] && [ -f $install_path$file_name ]; then
+    if [ -L $LINK_PATH$FILE_NAME ] && [ -f $INSTALL_PATH$FILE_NAME ]; then
         return 0
     fi
     return -1
@@ -56,17 +59,17 @@ function install()
 {
     echo "Installing..."
 
-    if [ ! -d $install_path ]; then
-        mkdir $install_path
+    if [ ! -d $INSTALL_PATH ]; then
+        mkdir $INSTALL_PATH
     fi
     
-    if [ -L $link_path$file_name ]; then
-        sudo rm -rf $link_path$file_name
+    if [ -L $LINK_PATH$FILE_NAME ]; then
+        sudo rm -rf $LINK_PATH$FILE_NAME
     fi
 
-    mv $temp_file_name $install_path$file_name && \
-    chmod a+x $install_path$file_name && \
-    sudo ln -s $install_path$file_name $link_path$file_name && \
+    mv $INSTALL_FILE_NAME $INSTALL_PATH$FILE_NAME && \
+    chmod a+x $INSTALL_PATH$FILE_NAME && \
+    sudo ln -s $INSTALL_PATH$FILE_NAME $LINK_PATH$FILE_NAME && \
     echo -ne "Install \033[33msuccess\033[0m\n" || echo -ne "Install \033[31mfailed\033[0m\n"
 }
 
@@ -76,7 +79,7 @@ if [ $# -eq 0 ]; then
     check_install
     if [ ! $? -eq  0 ]; then
         # install this
-        cp $0 $temp_file_name
+        cp $SELF_FILE $INSTALL_FILE_NAME
         install
     fi
 
@@ -105,20 +108,32 @@ if [ $# -eq 0 ]; then
     exit 0
 fi
 
+# todo use getotps to handle options
+# while getopts 'h:j:m:u' OPT; do
+#     case $OPT in
+#         j) JAVA_DIR="$OPTARG";;
+#         m) MAVEN_DIR="$OPTARG";;
+#         u) upload="true";;
+#         h) usage;;
+#         ?) usage;;
+#     esac
+# done
+
+
 # set flags
 for i in $(seq 1 $#); do 
     # echo "Debug: "${@:i:1}
     case ${@:i:1} in
         -o) 
-            show_output="true"
+            FLAG_ShowOutPut="true"
             echo "Open output"
             ;;
         -r) 
-            robot_id=${@:i+1:1}
+            CURRENT_ROBOT_ID=${@:i+1:1}
         	let i=i+1
             ;;
         -h)
-            show_command="false"
+            FLAG_ShowCommand="false"
             echo "Hide command"
             ;;
         -c) 
@@ -134,42 +149,45 @@ for i in $(seq 1 $#); do
             exit 0
             ;;
         -u)
-            show_format="false"
+            FLAG_ShowFormat="false"
             echo "Hide fromat"
             ;;
         -help)
             echo \
 'Usage: vnotice <tags> -c {command}
+Description:
     -v version
-    -o open output
+    -o open output 
     -r choose robot
     -h hide command
-    -u hide format
+    -u show output only
     -c set commands
     -help show help
 e.g.
     vnotice -c ls -l
     ls -l; vnotice -u -c echo "ls returned $?"
-contact
-    Dong Jie <dongjie5@huaqin.com>
-    Zhu Guangfeng <zhu.thatboy@outlook.com> <zhuguangfeng@huaqin.com>
+Contact:
+    Dong Jie <boy_dongjie@foxmail.com>
+    Zhu Guangfeng <zhu.thatboy@outlook.com>
     '
         exit 0;
         ;;
     esac
 done
 
+# exit when command is nul
 if [ ${#command[*]} -lt 1 ]; then
     exit 0
 fi
 
-# set status
-command_output=`eval ${command[*]} 2>&1` && success="success" || success="failed"
+# run command
+job_start_time=`date`
+MSG_CommandOutput=`eval ${command[*]} 2>&1` && success="success" || success="failed"
 # connect message
-if [ "${show_format}" == "true" ]; then
+if [ "${FLAG_ShowFormat}" == "true" ]; then
     message=`echo -e "**START**\n> <font color=\\\\\"info\\\\\">${job_start_time}</font>\n\n**FINISH**\n> <font color=\\\\\"info\\\\\">$(date)</font>\n\n**Path**\n\n> <font color=\\\\\"comment\\\\\"> $(pwd)</font>\n\n"` 
 
-    if [ "${show_command}" == "true" ]; then
+    if [ "${FLAG_ShowCommand}" == "true" ]; then
         message=${message}`echo -e "\n\n**Cmd**\n\n> <font color=\\\\\"comment\\\\\">${command[*]}</font>\n\n"`
     fi 
     if [ "$success" == "success" ]; then
@@ -178,17 +196,17 @@ if [ "${show_format}" == "true" ]; then
         message=${message}`echo -e "\n\n**Status**\n\n> <font color=\\\\\"warning\\\\\">${success}</font>\n\n"` 
     fi
 
-    if [ "${show_output}" == "true" ]; then
+    if [ "${FLAG_ShowOutPut}" == "true" ]; then
        message=${message}`echo -e "\n\n**output**\n> "`
-        message=${message}${command_output} 
+        message=${message}${MSG_CommandOutput} 
     fi
 else
-    message=${message}${command_output} 
+    message=${message}${MSG_CommandOutput} 
 fi 
 
 json_msg="{ \"msgtype\": \"markdown\", \"markdown\": { \"content\": \"${message}\" } }"; 
 # send message
-curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${robot_id}" -H 'Content-Type: application/json' -d "${json_msg}"
+curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${CURRENT_ROBOT_ID}" -H 'Content-Type: application/json' -d "${json_msg}"
 echo 
 # return code
 if [ ${success} == "failed" ]; then
