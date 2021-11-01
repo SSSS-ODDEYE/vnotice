@@ -1,5 +1,5 @@
 #!/bin/bash 
-VERSION="v1.0.1"
+VERSION="v1.0.2"
 
 FILE_NAME="vnotice"
 CONFIG_NAME="vnotice.config"
@@ -96,6 +96,13 @@ if [ $# -eq 0 ]; then
             cp $SELF_FILE $INSTALL_FILE_NAME
             install
         fi
+    fi
+
+    # config robot_id
+    if [ ! -f $INSTALL_PATH$CONFIG_NAME ]; then
+        echo -ne "Config ROBOT_ID: "
+        read -a ROBOT_ID
+        echo "ROBOT_ID=$ROBOT_ID" > $INSTALL_PATH$CONFIG_NAME
     fi
 
     INSTALLED_VERSION=`query_installed_version`
