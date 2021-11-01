@@ -2,13 +2,19 @@
 VERSION="v1.0.1"
 
 FILE_NAME="vnotice"
+CONFIG_NAME="vnotice.config"
 INSTALL_FILE_NAME=$FILE_NAME.install
 INSTALL_PATH=~/bin/
 LINK_PATH=/usr/bin/
-
 GITHUB_URL=https://github.com.cnpmjs.org/
 GITHUBAPI_URL=https://api.github.com/
 USER_REPO_NAME="Ohto-Ai/vnotice"
+
+# load setting
+if [ -f $INSTALL_PATH$CONFIG_NAME ]; then
+    source $INSTALL_PATH$CONFIG_NAME
+fi
+
 
 CURRENT_ROBOT_ID=$ROBOT_ID
 
@@ -79,8 +85,17 @@ if [ $# -eq 0 ]; then
     check_install
     if [ ! $? -eq  0 ]; then
         # install this
+        echo "Install Version $VERSION ..."
         cp $SELF_FILE $INSTALL_FILE_NAME
         install
+    else
+        INSTALLED_VERSION=`query_installed_version`
+        if [ $VERSION \> $INSTALLED_VERSION ]; then
+            # install this
+            echo "Install Version $VERSION ..."
+            cp $SELF_FILE $INSTALL_FILE_NAME
+            install
+        fi
     fi
 
     INSTALLED_VERSION=`query_installed_version`
@@ -89,12 +104,13 @@ if [ $# -eq 0 ]; then
     echo "Check update..."
 
     LATEST_VERSION=`query_latest_version`
+    echo "Latest version is $LATEST_VERSION"
 
     if [ $LATEST_VERSION"x" == "x" ]; then
         echo "No Version Found!"
         exit 0;
     fi
-    if [ $LATEST_VERSION != $INSTALLED_VERSION ]; then
+    if [ $LATEST_VERSION \> $INSTALLED_VERSION ]; then
         echo "Latest version $LATEST_VERSION found. Current version is $INSTALLED_VERSION"
         download_version $LATEST_VERSION
         if [ $? -eq 0 ]; then
