@@ -31,3 +31,13 @@ chmod a+x vnotice
 - `-r {robot_id}` 指定本次使用的机器人  
 - `-v` 显示版本信息  
 - `-help` 显示帮助  
+
+### 致谢
+
+感谢以下作者为仓库作出的贡献  
+<a href="https://github.com/Ohto-Ai">
+    <img src="https://avatars.githubusercontent.com/Ohto-Ai" width="96px">
+</a> 
+<a href="https://github.com/beiklive">
+    <img src="https://avatars.githubusercontent.com/beiklive" width="96px">
+</a> 
