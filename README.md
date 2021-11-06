@@ -14,6 +14,7 @@ vnotice是一个简单易用的企业微信机器人消息推送脚本
 ## 用法
 
 ### 安装
+地址 [ [Release](https://github.com/Ohto-Ai/vnotice/releases) ]  
 下载脚本后执行即可
 ```bash
 chmod a+x vnotice
