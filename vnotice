@@ -1,8 +1,9 @@
 #!/bin/bash 
-VERSION="v1.0.2"
+VERSION="v1.0.3"
 
 FILE_NAME="vnotice"
 CONFIG_NAME="vnotice.config"
+SELF_FILE=$0
 INSTALL_FILE_NAME=$FILE_NAME.install
 INSTALL_PATH=~/bin/
 LINK_PATH=/usr/bin/
@@ -10,21 +11,21 @@ GITHUB_URL=https://github.com.cnpmjs.org/
 GITHUBAPI_URL=https://api.github.com/
 USER_REPO_NAME="Ohto-Ai/vnotice"
 
+FLAG_ShowOutPut=false
+FLAG_ShowFormat=true
+
 # load setting
 if [ -f $INSTALL_PATH$CONFIG_NAME ]; then
     source $INSTALL_PATH$CONFIG_NAME
 fi
-
-
 CURRENT_ROBOT_ID=$ROBOT_ID
 
-
-FLAG_ShowOutPut="false"
-FLAG_ShowCommand="true"
-FLAG_ShowFormat="true"
 MSG_CommandOutput="null"
 
-SELF_FILE=$0
+function info()
+{
+    echo -ne "[Info] vnotice: $*\n"
+}
 
 function query_latest_version()
 {
@@ -36,13 +37,13 @@ function query_latest_version()
 function download_version()
 {
     version=$1
-    echo -ne "\033[33mFile downloading [$FILE_NAME]...\033[0m\n"
+    info "\033[33mFile downloading [$FILE_NAME]...\033[0m\n"
     wget -O $INSTALL_FILE_NAME $GITHUB_URL$USER_REPO_NAME/releases/download/$version/$FILE_NAME \
-    && success=0 || success=-1
-    if [ $success == 0 ]; then
-        echo -ne "Download \033[33msuccess\033[0m\n" 
+    && success=true || success=false
+    if [ $success ]; then
+        info "Download \033[33msuccess\033[0m\n" 
     else
-        echo -ne "Download \033[31mfailed\033[0m\n"           
+        info "Download \033[31mfailed\033[0m\n"           
     fi
     return $success
 }
@@ -63,7 +64,7 @@ function query_installed_version()
 
 function install()
 {
-    echo "Installing..."
+    info "Installing..."
 
     if [ ! -d $INSTALL_PATH ]; then
         mkdir $INSTALL_PATH
@@ -76,23 +77,35 @@ function install()
     mv $INSTALL_FILE_NAME $INSTALL_PATH$FILE_NAME && \
     chmod a+x $INSTALL_PATH$FILE_NAME && \
     sudo ln -s $INSTALL_PATH$FILE_NAME $LINK_PATH$FILE_NAME && \
-    echo -ne "Install \033[33msuccess\033[0m\n" || echo -ne "Install \033[31mfailed\033[0m\n"
+    info "Install \033[33msuccess\033[0m\n" || info "Install \033[31mfailed\033[0m\n"
 }
 
-if [ $# -eq 0 ]; then
-    echo "Check install"
+
+function lunch_install()
+{
+    info "Check install"
 
     check_install
-    if [ ! $? -eq  0 ]; then
+
+    if [ $1 ]; then
+        # force install this
+        info "Force Install Version $VERSION ..."
+        cp $SELF_FILE $INSTALL_FILE_NAME
+        install
+        exit 0
+    fi
+
+
+    if [ ! $? ]; then
         # install this
-        echo "Install Version $VERSION ..."
+        info "Install Version $VERSION ..."
         cp $SELF_FILE $INSTALL_FILE_NAME
         install
     else
         INSTALLED_VERSION=`query_installed_version`
         if [ $VERSION \> $INSTALLED_VERSION ]; then
             # install this
-            echo "Install Version $VERSION ..."
+            info "Install Version $VERSION ..."
             cp $SELF_FILE $INSTALL_FILE_NAME
             install
         fi
@@ -100,7 +113,7 @@ if [ $# -eq 0 ]; then
 
     # config robot_id
     if [ ! -f $INSTALL_PATH$CONFIG_NAME ]; then
-        echo -ne "Config ROBOT_ID: "
+        info -ne "Config ROBOT_ID: "
         read -a ROBOT_ID
         echo "ROBOT_ID=$ROBOT_ID" > $INSTALL_PATH$CONFIG_NAME
     fi
@@ -108,84 +121,78 @@ if [ $# -eq 0 ]; then
     INSTALLED_VERSION=`query_installed_version`
 
     # todo 添加定时升级任务
-    echo "Check update..."
+    info "Check update..."
 
     LATEST_VERSION=`query_latest_version`
-    echo "Latest version is $LATEST_VERSION"
+    info "Latest version is $LATEST_VERSION"
 
     if [ $LATEST_VERSION"x" == "x" ]; then
-        echo "No Version Found!"
+        info "No Version Found!"
         exit 0;
     fi
     if [ $LATEST_VERSION \> $INSTALLED_VERSION ]; then
-        echo "Latest version $LATEST_VERSION found. Current version is $INSTALLED_VERSION"
+        info "Latest version $LATEST_VERSION found. Current version is $INSTALLED_VERSION"
         download_version $LATEST_VERSION
-        if [ $? -eq 0 ]; then
+        if [ $? ]; then
             install
         else
-            exit -1
+            exit false
         fi
     else
-        echo "Current Version $INSTALLED_VERSION is lateset version!"
+        info "Current version $INSTALLED_VERSION is lateset version!"
     fi
     exit 0
+}
+
+
+if [ $# -eq 0 ]; then
+    lunch_install
 fi
 
-# todo use getotps to handle options
-# while getopts 'h:j:m:u' OPT; do
-#     case $OPT in
-#         j) JAVA_DIR="$OPTARG";;
-#         m) MAVEN_DIR="$OPTARG";;
-#         u) upload="true";;
-#         h) usage;;
-#         ?) usage;;
-#     esac
-# done
-
-
+FLAG_unknown_parameter=false
 # set flags
 for i in $(seq 1 $#); do 
     # echo "Debug: "${@:i:1}
     case ${@:i:1} in
-        -o) 
-            FLAG_ShowOutPut="true"
-            echo "Open output"
+        -i | --install)
+            info "Lunch install"
+            lunch_install true
             ;;
-        -r) 
+        -o | --output) 
+            FLAG_ShowOutPut=true
+            info "Open output"
+            ;;
+        -r | --robot) 
             CURRENT_ROBOT_ID=${@:i+1:1}
         	let i=i+1
             ;;
-        -h)
-            FLAG_ShowCommand="false"
-            echo "Hide command"
-            ;;
-        -c) 
+        -c | --command) 
             let i=i+1
             for j in $(seq $i $#); do 
                 command[$j-$i]=${@:j:1}
             done
-            echo "Set command \"${command[*]}\""
+            info "Set command \"${command[*]}\""
             break
             ;;
-        -v)
+        -v | --version)
             echo "vnotice ${VERSION}"
             exit 0
             ;;
-        -u)
-            FLAG_ShowFormat="false"
-            echo "Hide fromat"
+        -u | --only-output)
+            FLAG_ShowFormat=false
+            info "Show output only"
             ;;
-        -help)
+        -h | --help)
             echo \
 'Usage: vnotice <tags> -c {command}
 Description:
-    -v version
-    -o open output 
-    -r choose robot
-    -h hide command
-    -u show output only
-    -c set commands
-    -help show help
+    -v | --version          show version
+    -o | --output           open output 
+    -r | --robot            choose robot
+    -u | --only-output      show output only
+    -c | --command          set commands
+    -h | --help             show help
+    -i | --install          force install this version
 e.g.
     vnotice -c ls -l
     ls -l; vnotice -u -c echo "ls returned $?"
@@ -195,8 +202,14 @@ Contact:
     '
         exit 0;
         ;;
+        *)
+            info "Unknown parameter \"${@:i:1}\""
+            FLAG_unknown_parameter=true
     esac
 done
+if [ "$FLAG_unknown_parameter" == "true" ]; then
+exit -1
+fi
 
 # exit when command is nul
 if [ ${#command[*]} -lt 1 ]; then
@@ -209,10 +222,7 @@ MSG_CommandOutput=`eval ${command[*]} 2>&1` && success="success" || success="fai
 # connect message
 if [ "${FLAG_ShowFormat}" == "true" ]; then
     message=`echo -e "**START**\n> <font color=\\\\\"info\\\\\">${job_start_time}</font>\n\n**FINISH**\n> <font color=\\\\\"info\\\\\">$(date)</font>\n\n**Path**\n\n> <font color=\\\\\"comment\\\\\"> $(pwd)</font>\n\n"` 
-
-    if [ "${FLAG_ShowCommand}" == "true" ]; then
-        message=${message}`echo -e "\n\n**Cmd**\n\n> <font color=\\\\\"comment\\\\\">${command[*]}</font>\n\n"`
-    fi 
+    message=${message}`echo -e "\n\n**Cmd**\n\n> <font color=\\\\\"comment\\\\\">${command[*]}</font>\n\n"`
     if [ "$success" == "success" ]; then
         message=${message}`echo -e "\n\n**Status**\n\n> <font color=\\\\\"info\\\\\">${success}</font>\n\n"` 
     else
@@ -221,7 +231,7 @@ if [ "${FLAG_ShowFormat}" == "true" ]; then
 
     if [ "${FLAG_ShowOutPut}" == "true" ]; then
        message=${message}`echo -e "\n\n**output**\n> "`
-        message=${message}${MSG_CommandOutput} 
+       message=${message}${MSG_CommandOutput} 
     fi
 else
     message=${message}${MSG_CommandOutput} 
@@ -229,8 +239,7 @@ fi
 
 json_msg="{ \"msgtype\": \"markdown\", \"markdown\": { \"content\": \"${message}\" } }"; 
 # send message
-curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${CURRENT_ROBOT_ID}" -H 'Content-Type: application/json' -d "${json_msg}"
-echo 
+info `curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${CURRENT_ROBOT_ID}" -H 'Content-Type: application/json' -d "${json_msg}" 2>/dev/null`
 # return code
 if [ ${success} == "failed" ]; then
     exit -1
