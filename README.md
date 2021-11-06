@@ -49,8 +49,8 @@ vnotice -c use-multiple-parameters-demo.sh a --b "c" -d
 
 感谢以下作者为仓库作出的贡献  
 <a href="https://github.com/Ohto-Ai">
-    <img src="https://avatars.githubusercontent.com/Ohto-Ai" width="96px">
+    <img src="https://avatars.githubusercontent.com/Ohto-Ai" style="border-radius:50%" width="96px">
 </a> 
 <a href="https://github.com/beiklive">
-    <img src="https://avatars.githubusercontent.com/beiklive" width="96px">
+    <img src="https://avatars.githubusercontent.com/beiklive" style="border-radius:50%" width="96px">
 </a> 
