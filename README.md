@@ -32,6 +32,18 @@ chmod a+x vnotice
 - `-v` 显示版本信息  
 - `-help` 显示帮助  
 
+### 样例
+```bash
+lunch-long-time-build-demo.sh; vnotice -u -c echo lunch finished, return $?
+# 针对预期运行时间较长的脚本可以设置提醒
+
+vnotice -c view-status-demo.sh && vnotice -u -c echo view success || vnotice -u -c echo view failed
+# 可以使用 -c 直接执行指令，执行完毕会返回指令结果，并被后续指令继续使用
+
+vnotice -c use-multiple-parameters-demo.sh a --b "c" -d
+# -c 不限制后续参数
+```
+
 ### 致谢
 
 感谢以下作者为仓库作出的贡献  
