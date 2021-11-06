@@ -2,6 +2,11 @@
   <img src="https://api.onedrive.com/v1.0/shares/s!AnnswJMWKhhhljhu14hyg6TlxcPc/root/content" height="auto" width="auto" />
 </p>
 
+<a href="https://github.com/Ohto-Ai/vnotice/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/Ohto-Ai/vnotice"></a>
+<a href="https://github.com/Ohto-Ai/vnotice/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Ohto-Ai/vnotice"></a>
+<a href="https://github.com/Ohto-Ai/vnotice/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Ohto-Ai/vnotice"></a>
+<a href="https://github.com/Ohto-Ai/vnotice/stargazers"><img src="https://img.shields.io/badge/WELCOME-STAR-red"></a>
+
 # vnotice
 
 vnotice是一个简单易用的企业微信机器人消息推送脚本
