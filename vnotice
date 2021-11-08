@@ -103,7 +103,7 @@ function lunch_install()
         install
     else
         INSTALLED_VERSION=`query_installed_version`
-        if [ $VERSION \> $INSTALLED_VERSION ]; then
+        if [ "$VERSION" \> "$INSTALLED_VERSION" ]; then
             # install this
             info "Install Version $VERSION ..."
             cp $SELF_FILE $INSTALL_FILE_NAME
