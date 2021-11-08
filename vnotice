@@ -1,12 +1,13 @@
 #!/bin/bash 
-VERSION="v1.0.3"
-
 FILE_NAME="vnotice"
 CONFIG_NAME="vnotice.config"
-SELF_FILE=$0
+VERSION="v1.0.3"
+
 INSTALL_FILE_NAME=$FILE_NAME.install
 INSTALL_PATH=~/bin/
 LINK_PATH=/usr/bin/
+
+SELF_FILE=$0
 GITHUB_URL=https://github.com.cnpmjs.org/
 GITHUBAPI_URL=https://api.github.com/
 USER_REPO_NAME="Ohto-Ai/vnotice"
@@ -77,7 +78,7 @@ function install()
     mv $INSTALL_FILE_NAME $INSTALL_PATH$FILE_NAME && \
     chmod a+x $INSTALL_PATH$FILE_NAME && \
     sudo ln -s $INSTALL_PATH$FILE_NAME $LINK_PATH$FILE_NAME && \
-    info "Install \033[33msuccess\033[0m\n" || info "Install \033[31mfailed\033[0m\n"
+    info "Install \033[33msuccess\033[0m" || info "Install \033[31mfailed\033[0m"
 }
 
 
@@ -113,9 +114,16 @@ function lunch_install()
 
     # config robot_id
     if [ ! -f $INSTALL_PATH$CONFIG_NAME ]; then
-        info -ne "Config ROBOT_ID: "
+        echo -ne "Config ROBOT_ID: "
         read -a ROBOT_ID
-        echo "ROBOT_ID=$ROBOT_ID" > $INSTALL_PATH$CONFIG_NAME
+        
+        cat > $INSTALL_PATH$CONFIG_NAME << EOF
+# This file is for vnotice
+# Modify this file with caution.
+# Contact: zhu.thatboy@outlook.com | boy_dongjie@foxmail.com
+EOF
+        echo -ne "ROBOT_ID=$ROBOT_ID\nINSTALL_PATH=$INSTALL_PATH\nLINK_PATH=$LINK_PATH\nGITHUB_URL=$GITHUB_URL\n\
+GITHUBAPI_URL=$GITHUBAPI_URL\nUSER_REPO_NAME=$USER_REPO_NAME" >> $INSTALL_PATH$CONFIG_NAME
     fi
 
     INSTALLED_VERSION=`query_installed_version`
