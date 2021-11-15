@@ -1,12 +1,16 @@
 #!/bin/bash 
+
+# software info
 FILE_NAME="vnotice"
 CONFIG_NAME="vnotice.config"
-VERSION="v1.0.4"
+VERSION="v1.0.0"
 
+# uninstall info
 UNINSTALL_LIST=(~/bin/vnotice
 ~/bin/vnotice.config)
 
-INSTALL_FILE_NAME=$FILE_NAME.install
+# install info
+DOWNLOAD_FILE_NAME=$FILE_NAME.install
 INSTALL_PATH=~/bin/ohtoai/vnotice/
 LINK_PATH=/usr/bin/
 
@@ -24,8 +28,7 @@ if [ -f $INSTALL_PATH$CONFIG_NAME ]; then
 fi
 CURRENT_ROBOT_ID=$ROBOT_ID
 
-MSG_CommandOutput="null"
-
+######### message function #########
 function info()
 {
     echo -ne "[Info] vnotice: $*\n"
@@ -36,6 +39,7 @@ function error()
     echo -ne "[Error] vnotice: $*\n"
 }
 
+######### version function #########
 function query_latest_version()
 {
     pattern="tag_name"
@@ -47,7 +51,7 @@ function download_version()
 {
     version=$1
     info "\033[33mFile downloading [$FILE_NAME]...\033[0m\n"
-    wget -O $INSTALL_FILE_NAME $GITHUB_URL$USER_REPO_NAME/releases/download/$version/$FILE_NAME \
+    wget -O $DOWNLOAD_FILE_NAME $GITHUB_URL$USER_REPO_NAME/releases/download/$version/$FILE_NAME \
     && success=0 || success=1
     if [ $success ]; then
         info "Download \033[33msuccess\033[0m\n" 
@@ -59,10 +63,11 @@ function download_version()
 
 function check_install()
 {
-    if [ -L $LINK_PATH$FILE_NAME ] && [ -f $INSTALL_PATH$FILE_NAME ]; then
-        return 0
+    linked_path=`readlink -f $LINK_PATH$FILE_NAME`
+    if [ ! -L $LINK_PATH$FILE_NAME ] || [ ! -f $INSTALL_PATH$FILE_NAME ] || [ ! $linked_path -ef $INSTALL_PATH$FILE_NAME ]; then
+        return -1
     fi
-    return -1
+    return 0
 }
 
 function query_installed_version()
@@ -75,55 +80,84 @@ function install()
 {
     info "Installing..."
 
+    # uninstall old file
+    info "Clear old file..."
     for uninstall_file in ${UNINSTALL_LIST[@]}; do
         if [ -f $uninstall_file ]; then
             info Remove $uninstall_file
-            rm $uninstall_file 2>/dev/null
+            rm $uninstall_file
         fi
     done
 
+    success=0
+    # make folder
     if [ ! -d $INSTALL_PATH ]; then
-        mkdir -p $INSTALL_PATH
+        mkdir -p $INSTALL_PATH || success=-1
     fi
     
-    if [ -L $LINK_PATH$FILE_NAME ]; then
-        sudo rm -rf $LINK_PATH$FILE_NAME
+    # copy file
+    cp -f $SELF_FILE $INSTALL_PATH$FILE_NAME || success=-1
+    chmod a+x $INSTALL_PATH$FILE_NAME || success=-1
+
+    # remove error link
+    linked_path=`readlink -f $LINK_PATH$FILE_NAME`
+    if [ ! linked_path -ef $INSTALL_PATH$FILE_NAME ]; then
+        sudo rm -rf $LINK_PATH$FILE_NAME || success=-1
     fi
 
-    mv $INSTALL_FILE_NAME $INSTALL_PATH$FILE_NAME && \
-    chmod a+x $INSTALL_PATH$FILE_NAME && \
-    sudo ln -s $INSTALL_PATH$FILE_NAME $LINK_PATH$FILE_NAME && \
-    info "Install \033[33msuccess\033[0m" || info "Install \033[31mfailed\033[0m"
+    # add link if not exist
+    if [ ! -L $LINK_PATH$FILE_NAME ]; then
+        sudo ln -s $INSTALL_PATH$FILE_NAME $LINK_PATH$FILE_NAME || success=-1
+    fi
+
+    test $success -eq 0 && info "Install \033[33msuccess\033[0m" || info "Install \033[31mfailed\033[0m"
 }
 
 
 function lunch_install()
 {
+    force_install=$1
     info "Check install"
 
-    check_install
-
-    if [ $1 ]; then
+    if [ $force_install ]; then
         # force install this
         info "Force Install Version $VERSION ..."
-        cp $SELF_FILE $INSTALL_FILE_NAME
+        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
+            cp $SELF_FILE $DOWNLOAD_FILE_NAME
+        fi
         install
+
+        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
+            rm $DOWNLOAD_FILE_NAME
+        fi
         exit 0
     fi
 
+    check_install
 
     if [ ! $? ]; then
-        # install this
+        # install this if not install
         info "Install Version $VERSION ..."
-        cp $SELF_FILE $INSTALL_FILE_NAME
+        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
+            cp $SELF_FILE $DOWNLOAD_FILE_NAME
+        fi
         install
+        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
+            rm $DOWNLOAD_FILE_NAME
+        fi
+
     else
         INSTALLED_VERSION=`query_installed_version`
         if [ "$VERSION" \> "$INSTALLED_VERSION" ]; then
             # install this
             info "Install Version $VERSION ..."
-            cp $SELF_FILE $INSTALL_FILE_NAME
-            install
+            if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
+                cp $SELF_FILE $DOWNLOAD_FILE_NAME
+            fi
+            install            
+            if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
+                rm $DOWNLOAD_FILE_NAME
+            fi
         fi
     fi
 
@@ -157,9 +191,12 @@ GITHUBAPI_URL=$GITHUBAPI_URL\nUSER_REPO_NAME=$USER_REPO_NAME" >> $INSTALL_PATH$C
         info "Latest version $LATEST_VERSION found. Current version is $INSTALLED_VERSION"
         download_version $LATEST_VERSION
         if [ $? ]; then
-            install
+	    # install new version
+            bash $DOWNLOAD_FILE_NAME
+            rm $DOWNLOAD_FILE_NAME
         else
-            exit false
+            error "Install failed \"$DOWNLOAD_FILE_NAME\""
+            exit -1
         fi
     else
         info "Current version $INSTALLED_VERSION is lateset version!"
@@ -168,45 +205,49 @@ GITHUBAPI_URL=$GITHUBAPI_URL\nUSER_REPO_NAME=$USER_REPO_NAME" >> $INSTALL_PATH$C
 }
 
 
-if [ $# -eq 0 ]; then
-    lunch_install
-fi
+######### main #########
 
-FLAG_unknown_parameter=false
-# set flags
-for i in $(seq 1 $#); do 
-    # echo "Debug: "${@:i:1}
-    case ${@:i:1} in
-        -i | --install)
-            info "Lunch install"
-            lunch_install true
-            ;;
-        -o | --output) 
-            FLAG_ShowOutPut=true
-            info "Open output"
-            ;;
-        -r | --robot) 
-            CURRENT_ROBOT_ID=${@:i+1:1}
-        	let i=i+1
-            ;;
-        -c | --command) 
-            let i=i+1
-            for j in $(seq $i $#); do 
-                command[$j-$i]=${@:j:1}
-            done
-            info "Set command \"${command[*]}\""
-            break
-            ;;
-        -v | --version)
-            echo "vnotice ${VERSION}"
-            exit 0
-            ;;
-        -u | --only-output)
-            FLAG_ShowFormat=false
-            info "Show output only"
-            ;;
-        -h | --help)
-            echo \
+function main()
+{
+    if [ $# -eq 0 ]; then
+        lunch_install
+    fi
+
+    FLAG_unknown_parameter=false
+    # set flags
+    for i in $(seq 1 $#); do 
+        # echo "Debug: "${@:i:1}
+        case ${@:i:1} in
+            -i | --install)
+                info "Lunch install"
+                lunch_install true
+                ;;
+            -o | --output) 
+                FLAG_ShowOutPut=true
+                info "Open output"
+                ;;
+            -r | --robot) 
+                CURRENT_ROBOT_ID=${@:i+1:1}
+                let i=i+1
+                ;;
+            -c | --command) 
+                let i=i+1
+                for j in $(seq $i $#); do 
+                    command[$j-$i]=${@:j:1}
+                done
+                info "Set command \"${command[*]}\""
+                break
+                ;;
+            -v | --version)
+                echo "vnotice ${VERSION}"
+                exit 0
+                ;;
+            -u | --only-output)
+                FLAG_ShowFormat=false
+                info "Show output only"
+                ;;
+            -h | --help)
+                echo \
 'Usage: vnotice <tags> -c {command}
 Description:
     -v | --version          show version
@@ -223,48 +264,50 @@ Contact:
     Dong Jie <boy_dongjie@foxmail.com>
     Zhu Guangfeng <zhu.thatboy@outlook.com>
     '
-        exit 0;
-        ;;
-        *)
-            error "Unknown parameter \"${@:i:1}\""
-            FLAG_unknown_parameter=true
-    esac
-done
-if [ "$FLAG_unknown_parameter" == "true" ]; then
-exit -1
-fi
+            exit 0;
+            ;;
+            *)
+                error "Unknown parameter \"${@:i:1}\""
+                FLAG_unknown_parameter=true
+        esac
+    done
+    if [ "$FLAG_unknown_parameter" == "true" ]; then
+        exit -1
+    fi
 
-# exit when command is nul
-if [ ${#command[*]} -lt 1 ]; then
-    exit 0
-fi
+    # exit when command is nul
+    if [ ${#command[*]} -lt 1 ]; then
+        exit 0
+    fi
 
-# run command
-job_start_time=`date`
-MSG_CommandOutput=`eval ${command[*]} 2>&1` && success="success" || success="failed"
-# connect message
-if [ "${FLAG_ShowFormat}" == "true" ]; then
-    message=`echo -e "**START**\n> <font color=\\\\\"info\\\\\">${job_start_time}</font>\n\n**FINISH**\n> <font color=\\\\\"info\\\\\">$(date)</font>\n\n**Path**\n\n> <font color=\\\\\"comment\\\\\"> $(pwd)</font>\n\n"` 
-    message=${message}`echo -e "\n\n**Cmd**\n\n> <font color=\\\\\"comment\\\\\">${command[*]}</font>\n\n"`
-    if [ "$success" == "success" ]; then
-        message=${message}`echo -e "\n\n**Status**\n\n> <font color=\\\\\"info\\\\\">${success}</font>\n\n"` 
+    # run command
+    job_start_time=`date`
+    MSG_CommandOutput=`eval ${command[*]} 2>&1` && success="success" || success="failed"
+    # connect message
+    if [ "${FLAG_ShowFormat}" == "true" ]; then
+        message=`echo -e "**START**\n> <font color=\\\\\"info\\\\\">${job_start_time}</font>\n\n**FINISH**\n> <font color=\\\\\"info\\\\\">$(date)</font>\n\n**Path**\n\n> <font color=\\\\\"comment\\\\\"> $(pwd)</font>\n\n"` 
+        message=${message}`echo -e "\n\n**Cmd**\n\n> <font color=\\\\\"comment\\\\\">${command[*]}</font>\n\n"`
+        if [ "$success" == "success" ]; then
+            message=${message}`echo -e "\n\n**Status**\n\n> <font color=\\\\\"info\\\\\">${success}</font>\n\n"` 
+        else
+            message=${message}`echo -e "\n\n**Status**\n\n> <font color=\\\\\"warning\\\\\">${success}</font>\n\n"` 
+        fi
+
+        if [ "${FLAG_ShowOutPut}" == "true" ]; then
+        message=${message}`echo -e "\n\n**output**\n> "`
+        message=${message}${MSG_CommandOutput} 
+        fi
     else
-        message=${message}`echo -e "\n\n**Status**\n\n> <font color=\\\\\"warning\\\\\">${success}</font>\n\n"` 
+        message=${message}${MSG_CommandOutput} 
+    fi 
+
+    json_msg="{ \"msgtype\": \"markdown\", \"markdown\": { \"content\": \"${message}\" } }"; 
+    # send message
+    info `curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${CURRENT_ROBOT_ID}" -H 'Content-Type: application/json' -d "${json_msg}" 2>/dev/null`
+    # return code
+    if [ ${success} == "failed" ]; then
+        exit -1
     fi
+}
 
-    if [ "${FLAG_ShowOutPut}" == "true" ]; then
-       message=${message}`echo -e "\n\n**output**\n> "`
-       message=${message}${MSG_CommandOutput} 
-    fi
-else
-    message=${message}${MSG_CommandOutput} 
-fi 
-
-json_msg="{ \"msgtype\": \"markdown\", \"markdown\": { \"content\": \"${message}\" } }"; 
-# send message
-info `curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${CURRENT_ROBOT_ID}" -H 'Content-Type: application/json' -d "${json_msg}" 2>/dev/null`
-# return code
-if [ ${success} == "failed" ]; then
-    exit -1
-fi
-
+main $@
