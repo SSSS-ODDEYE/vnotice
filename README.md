@@ -29,14 +29,15 @@
 vnotice是一个企业微信机器人消息推送脚本
 
 ## Features
-- git方式更新
 - 事务通知
-- 按需指定机器人
+- 机器人指定
+- 支持本地更新
 
 ## Installation
+请替换ROBOT_ID为你的机器人ID
 ```bash
 git clone git@github.com:Ohto-Ai/vnotice
-make install
+make install ROBOT_ID=XXXX-XXXX-XXXX-XXXX
 ```
 
 ## Update
@@ -45,7 +46,7 @@ make update
 ```
 
 ## Usage
-> 见`vnotice --help`
+> 见 `vnotice --help`
 
 ### examples
 ```bash
