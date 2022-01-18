@@ -90,7 +90,7 @@ function main()
                 break
                 ;;
             -v | --version)
-                echo "vnotice ${VERSION}"
+                echo ${VERSION}
                 exit 0
                 ;;
             -u | --only-output)
