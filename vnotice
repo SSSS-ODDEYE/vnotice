@@ -5,12 +5,7 @@ FILE_NAME="vnotice"
 CONFIGFILE=".config"
 INSTALLPATH=~/bin/ohtoai/vnotice/
 CONFIGFILE=.config
-VERSION="v1.1.0"
-
-SELF_FILE=$0
-GITHUB_URL=https://github.com.cnpmjs.org/
-GITHUBAPI_URL=https://api.github.com/
-USER_REPO_NAME="Ohto-Ai/vnotice"
+VERSION="v1.1.2"
 
 ######### message function #########
 function info()
@@ -77,10 +72,6 @@ function main()
     for ((i=1; i<=$#; i++)) do 
         # echo "Debug: para["$i"]="${@:i:1}
         case ${@:i:1} in
-            -i | --install)
-                info "Lunch install"
-                lunch_install true
-                ;;
             -o | --output) 
                 FLAG_ShowOutPut=true
                 info "Open output"
