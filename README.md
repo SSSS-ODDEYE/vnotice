@@ -1,38 +1,53 @@
 <p align="center">
   <img src="https://api.onedrive.com/v1.0/shares/s!AnnswJMWKhhhljhu14hyg6TlxcPc/root/content" height="auto" width="auto" />
 </p>
-
-<a href="https://github.com/Ohto-Ai/vnotice/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/Ohto-Ai/vnotice"></a>
-<a href="https://github.com/Ohto-Ai/vnotice/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Ohto-Ai/vnotice"></a>
-<a href="https://github.com/Ohto-Ai/vnotice/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Ohto-Ai/vnotice"></a>
-<a href="https://github.com/Ohto-Ai/vnotice/stargazers"><img src="https://img.shields.io/badge/WELCOME-STAR-red"></a>
-
 # vnotice
+
+[circleci]: https://app.circleci.com/pipelines/github/Ohto-Ai/vnotice
+[issues]: https://github.com/Ohto-Ai/vnotice/issues
+[stargazers]: https://github.com/Ohto-Ai/vnotice/stargazers
+[pulls]: https://github.com/Ohto-Ai/vnotice/pulls
+[commit-activity]: https://github.com/Ohto-Ai/vnotice/pulse
+[contributors]: https://github.com/Ohto-Ai/vnotice/contributors
+[use-this]: https://github.com/Ohto-Ai/vnotice/generate
+[circleci:badge]: https://img.shields.io/circleci/project/github/Ohto-Ai/vnotice/master
+[license:badge]: https://img.shields.io/github/license/Ohto-Ai/vnotice?style=for-the-badge&logo=github
+[issues:badge]: https://img.shields.io/github/issues/Ohto-Ai/vnotice?style=for-the-badge&logo=github
+[stargazers:badge]: https://img.shields.io/github/stars/Ohto-Ai/vnotice?style=for-the-badge&logo=github
+[pulls:badge]: https://img.shields.io/github/issues-pr/Ohto-Ai/vnotice?logo=github&style=for-the-badge&color=0088ff
+[contributors:badge]: https://img.shields.io/github/contributors/Ohto-Ai/vnotice?style=for-the-badge&logo=github
+[commit-activity:badge]: https://img.shields.io/github/commit-activity/m/Ohto-Ai/vnotice?style=for-the-badge&logo=github
+[repository]: https://github.com/Ohto-Ai/vnotice
+
+[![License][license:badge]](/LICENSE)
+[![Issues][issues:badge]][issues]  
+[![Stargazers][stargazers:badge]][stargazers]
+[![Pulls][pulls:badge]][pulls]  
+[![Contributors][contributors:badge]][contributors]
+[![Commit Activity][commit-activity:badge]][commit-activity]
 
 vnotice是一个企业微信机器人消息推送脚本
 
-## 特性
-- 通过脚本在线/本地更新
+## Features
+- git方式更新
 - 事务通知
 - 按需指定机器人
 
-## 用法
-
-### 安装
-地址 [ [Release](https://github.com/Ohto-Ai/vnotice/releases) ]  
-下载脚本后执行即可
+## Installation
 ```bash
-chmod a+x vnotice
-./vnotice
+git clone git@github.com:Ohto-Ai/vnotice
+make install
 ```
 
-### 更新
-如需安装最新版本，可直接执行`vnotice`指令来更新，如果要安装其他版本，可以将脚本下载后执行该脚本`./vnotice`
+## Update
+```bash
+make update
+```
 
-### 参数
+## Usage
 > 见`vnotice --help`
 
-### 样例
+### examples
 ```bash
 lunch-long-time-build-demo.sh; vnotice -u -c echo lunch finished, return $?
 # 针对预期运行时间较长的脚本可以设置提醒
@@ -44,9 +59,15 @@ vnotice -c use-multiple-parameters-demo.sh a --b "c" -d
 # -c 不限制后续参数
 ```
 
-### 致谢
+## License
 
-感谢以下作者为仓库作出的贡献  
+This project is licensed under the terms of the [MIT License](/LICENSE).
+
+## FAQ
+
+[![Email](https://img.shields.io/badge/mail-zhu.thatboy@outlook.com-blue.svg?&style=for-the-badge)](mailto:zhu.thatboy@outlook.com?subject=Feedback&body=This%20is%20a%20test%20feedback.)
+
+## Special Thanks
 <a href="https://github.com/Ohto-Ai">
     <img src="https://avatars.githubusercontent.com/Ohto-Ai" style="border-radius:50%" width="96px">
 </a>

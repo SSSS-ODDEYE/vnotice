@@ -2,221 +2,80 @@
 
 # software info
 FILE_NAME="vnotice"
-CONFIG_NAME="vnotice.config"
-VERSION="v1.0.0"
-
-# uninstall info
-UNINSTALL_LIST=(~/bin/vnotice
-~/bin/vnotice.config)
-
-# install info
-DOWNLOAD_FILE_NAME=$FILE_NAME.install
-INSTALL_PATH=~/bin/ohtoai/vnotice/
-LINK_PATH=/usr/bin/
+CONFIGFILE=".config"
+INSTALLPATH=~/bin/ohtoai/vnotice/
+CONFIGFILE=.config
+VERSION="v1.1.0"
 
 SELF_FILE=$0
 GITHUB_URL=https://github.com.cnpmjs.org/
 GITHUBAPI_URL=https://api.github.com/
 USER_REPO_NAME="Ohto-Ai/vnotice"
 
-FLAG_ShowOutPut=false
-FLAG_ShowFormat=true
-
-# load setting
-if [ -f $INSTALL_PATH$CONFIG_NAME ]; then
-    source $INSTALL_PATH$CONFIG_NAME
-fi
-CURRENT_ROBOT_ID=$ROBOT_ID
-
 ######### message function #########
 function info()
 {
-    echo -ne "[Info] vnotice: $*\n"
+    echo -ne "\033[35m[Info]\033[0m vnotice: $*\n"
+}
+
+function warning()
+{
+    echo -ne "\033[34m[Warning]\033[0m vnotice: $*\n"
 }
 
 function error()
 {
-    echo -ne "[Error] vnotice: $*\n"
+    echo -ne "\033[31m[Error]\033[0m vnotice: \033[31m$*\033[0m\n"
 }
 
-######### version function #########
-function query_latest_version()
+
+function help()
 {
-    pattern="tag_name"
-    json=`curl "${GITHUBAPI_URL}repos/$USER_REPO_NAME/releases/latest" 2>/dev/null`
-    echo $json | grep -Po "\"$pattern\":.*?[^\\\\]\","| perl -pe "s/\"$pattern\":\\s*//; s/^\"//; s/\",$//"
+    echo -ne \
+'Usage: \033[35mvnotice\033[0m \033[34m<tags>\033[0m | \033[34m-c\033[0m {command} | \033[34m-m\033[0m {message}
+Description:
+    \033[34m-v\033[0m | \033[34m--version     \033[0m     show version
+    \033[34m-o\033[0m | \033[34m--output      \033[0m     open output 
+    \033[34m-r\033[0m | \033[34m--robot       \033[0m     choose robot
+    \033[34m-u\033[0m | \033[34m--only-output \033[0m     show output only
+    \033[34m-c\033[0m | \033[34m--command     \033[0m     set commands
+    \033[34m-h\033[0m | \033[34m--help        \033[0m     show help
+    \033[34m-m\033[0m | \033[34m--message     \033[0m     show message without command
+e.g.
+    \033[35mvnotice\033[0m \033[34m-c ls -l\033[0m
+    \033[35mls\033[0m \033[34m-l\033[0m; \033[35mvnotice\033[0m \033[34m-u -c echo "ls returned $?"\033[0m
+Contact:
+    Dong Jie <\033[36mboy_dongjie@foxmail.com\033[0m>
+    Zhu Guangfeng <\033[36mzhu.thatboy@outlook.com\033[0m>
+Repo:
+    \033[33mhttps://github.com/Ohto-Ai/vnotice\033[0m
+'
 }
 
-function download_version()
-{
-    version=$1
-    info "\033[33mFile downloading [$FILE_NAME]...\033[0m\n"
-    wget -O $DOWNLOAD_FILE_NAME $GITHUB_URL$USER_REPO_NAME/releases/download/$version/$FILE_NAME \
-    && success=0 || success=1
-    if [ $success ]; then
-        info "Download \033[33msuccess\033[0m\n" 
-    else
-        info "Download \033[31mfailed\033[0m\n"           
-    fi
-    return $success
-}
+FLAG_ShowOutPut=false
+FLAG_ShowFormat=true
 
-function check_install()
-{
-    linked_path=`readlink -f $LINK_PATH$FILE_NAME`
-    if [ ! -L $LINK_PATH$FILE_NAME ] || [ ! -f $INSTALL_PATH$FILE_NAME ] || [ ! $linked_path -ef $INSTALL_PATH$FILE_NAME ]; then
-        return -1
-    fi
-    return 0
-}
-
-function query_installed_version()
-{
-    msg=`vnotice -v 2>/dev/null`
-    echo ${msg#* }
-}
-
-function install()
-{
-    info "Installing..."
-
-    # uninstall old file
-    info "Clear old file..."
-    for uninstall_file in ${UNINSTALL_LIST[@]}; do
-        if [ -f $uninstall_file ]; then
-            info Remove $uninstall_file
-            rm $uninstall_file
-        fi
-    done
-
-    success=0
-    # make folder
-    if [ ! -d $INSTALL_PATH ]; then
-        mkdir -p $INSTALL_PATH || success=-1
-    fi
-    
-    # copy file
-    cp -f $SELF_FILE $INSTALL_PATH$FILE_NAME || success=-1
-    chmod a+x $INSTALL_PATH$FILE_NAME || success=-1
-
-    # remove error link
-    linked_path=`readlink -f $LINK_PATH$FILE_NAME`
-    if [ ! linked_path -ef $INSTALL_PATH$FILE_NAME ]; then
-        sudo rm -rf $LINK_PATH$FILE_NAME || success=-1
-    fi
-
-    # add link if not exist
-    if [ ! -L $LINK_PATH$FILE_NAME ]; then
-        sudo ln -s $INSTALL_PATH$FILE_NAME $LINK_PATH$FILE_NAME || success=-1
-    fi
-
-    test $success -eq 0 && info "Install \033[33msuccess\033[0m" || info "Install \033[31mfailed\033[0m"
-}
-
-
-function lunch_install()
-{
-    force_install=$1
-    info "Check install"
-
-    if [ $force_install ]; then
-        # force install this
-        info "Force Install Version $VERSION ..."
-        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
-            cp $SELF_FILE $DOWNLOAD_FILE_NAME
-        fi
-        install
-
-        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
-            rm $DOWNLOAD_FILE_NAME
-        fi
-        exit 0
-    fi
-
-    check_install
-
-    if [ ! $? ]; then
-        # install this if not install
-        info "Install Version $VERSION ..."
-        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
-            cp $SELF_FILE $DOWNLOAD_FILE_NAME
-        fi
-        install
-        if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
-            rm $DOWNLOAD_FILE_NAME
-        fi
-
-    else
-        INSTALLED_VERSION=`query_installed_version`
-        if [ "$VERSION" \> "$INSTALLED_VERSION" ]; then
-            # install this
-            info "Install Version $VERSION ..."
-            if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
-                cp $SELF_FILE $DOWNLOAD_FILE_NAME
-            fi
-            install            
-            if [ ! $SELF_FILE -ef $DOWNLOAD_FILE_NAME ]; then
-                rm $DOWNLOAD_FILE_NAME
-            fi
-        fi
-    fi
-
-    # config robot_id
-    if [ ! -f $INSTALL_PATH$CONFIG_NAME ]; then
-        echo -ne "Config ROBOT_ID: "
-        read -a ROBOT_ID
-        
-        cat > $INSTALL_PATH$CONFIG_NAME << EOF
-# This file is for vnotice
-# Modify this file with caution.
-# Contact: zhu.thatboy@outlook.com | boy_dongjie@foxmail.com
-EOF
-        echo -ne "ROBOT_ID=$ROBOT_ID\nINSTALL_PATH=$INSTALL_PATH\nLINK_PATH=$LINK_PATH\nGITHUB_URL=$GITHUB_URL\n\
-GITHUBAPI_URL=$GITHUBAPI_URL\nUSER_REPO_NAME=$USER_REPO_NAME" >> $INSTALL_PATH$CONFIG_NAME
-    fi
-
-    INSTALLED_VERSION=`query_installed_version`
-
-    # todo 添加定时升级任务
-    info "Check update..."
-
-    LATEST_VERSION=`query_latest_version`
-    info "Latest version is $LATEST_VERSION"
-
-    if [ $LATEST_VERSION"x" == "x" ]; then
-        info "No Version Found!"
-        exit 0;
-    fi
-    if [ $LATEST_VERSION \> $INSTALLED_VERSION ]; then
-        info "Latest version $LATEST_VERSION found. Current version is $INSTALLED_VERSION"
-        download_version $LATEST_VERSION
-        if [ $? ]; then
-	    # install new version
-            bash $DOWNLOAD_FILE_NAME
-            rm $DOWNLOAD_FILE_NAME
-        else
-            error "Install failed \"$DOWNLOAD_FILE_NAME\""
-            exit -1
-        fi
-    else
-        info "Current version $INSTALLED_VERSION is lateset version!"
-    fi
-    exit 0
-}
-
+# load setting
+if [ -f $INSTALLPATH$CONFIGFILE ]; then
+    source $INSTALLPATH$CONFIGFILE
+else
+    warning Missing config!
+fi
+CURRENT_ROBOT_ID=$ROBOT_ID
 
 ######### main #########
 
 function main()
 {
     if [ $# -eq 0 ]; then
-        lunch_install
+        echo "vnotice ${VERSION}"
+        help
+        exit 0
     fi
-
     FLAG_unknown_parameter=false
     # set flags
-    for i in $(seq 1 $#); do 
-        # echo "Debug: "${@:i:1}
+    for ((i=1; i<=$#; i++)) do 
+        # echo "Debug: para["$i"]="${@:i:1}
         case ${@:i:1} in
             -i | --install)
                 info "Lunch install"
@@ -227,8 +86,9 @@ function main()
                 info "Open output"
                 ;;
             -r | --robot) 
-                CURRENT_ROBOT_ID=${@:i+1:1}
                 let i=i+1
+                CURRENT_ROBOT_ID=${@:i:1}
+                info "Robot =" $CURRENT_ROBOT_ID
                 ;;
             -c | --command) 
                 let i=i+1
@@ -247,25 +107,15 @@ function main()
                 info "Show output only"
                 ;;
             -h | --help)
-                echo \
-'Usage: vnotice <tags> -c {command}
-Description:
-    -v | --version          show version
-    -o | --output           open output 
-    -r | --robot            choose robot
-    -u | --only-output      show output only
-    -c | --command          set commands
-    -h | --help             show help
-    -i | --install          force install this version
-e.g.
-    vnotice -c ls -l
-    ls -l; vnotice -u -c echo "ls returned $?"
-Contact:
-    Dong Jie <boy_dongjie@foxmail.com>
-    Zhu Guangfeng <zhu.thatboy@outlook.com>
-    '
-            exit 0;
+                help
             ;;
+            -m | --message)
+                let i=i+1
+                for j in $(seq $i $#); do 
+                    echo_message[$j-$i]=${@:j:1}
+                done
+                info "Set message \"${echo_message[*]}\""
+                ;;
             *)
                 error "Unknown parameter \"${@:i:1}\""
                 FLAG_unknown_parameter=true
@@ -273,6 +123,14 @@ Contact:
     done
     if [ "$FLAG_unknown_parameter" == "true" ]; then
         exit -1
+    fi
+
+    if [ ! ${#echo_message[*]} -lt 1 ]; then
+        message=${message}`echo $echo_message`
+
+        json_msg="{ \"msgtype\": \"markdown\", \"markdown\": { \"content\": \"${message}\" } }"; 
+        # send message
+        info `curl "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${CURRENT_ROBOT_ID}" -H 'Content-Type: application/json' -d "${json_msg}" 2>/dev/null`
     fi
 
     # exit when command is nul
