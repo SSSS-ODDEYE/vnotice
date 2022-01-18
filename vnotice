@@ -115,6 +115,7 @@ function main()
                     echo_message[$j-$i]=${@:j:1}
                 done
                 info "Set message \"${echo_message[*]}\""
+                break
                 ;;
             *)
                 error "Unknown parameter \"${@:i:1}\""
