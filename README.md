@@ -57,6 +57,9 @@ vnotice -c view-status-demo.sh && vnotice -u -c echo view success || vnotice -u 
 
 vnotice -c use-multiple-parameters-demo.sh a --b "c" -d
 # -c 不限制后续参数
+
+vnotice -m One, two, three
+# -m 输出消息
 ```
 
 ## License
@@ -73,7 +76,4 @@ This project is licensed under the terms of the [MIT License](/LICENSE).
 </a>
 <a href="https://github.com/beiklive">
     <img src="https://avatars.githubusercontent.com/beiklive" style="border-radius:50%" width="96px">
-</a>
-<a href="https://github.com/SSSS-ODDEYE">
-    <img src="https://avatars.githubusercontent.com/SSSS-ODDEYE" style="border-radius:50%" width="96px">
 </a>

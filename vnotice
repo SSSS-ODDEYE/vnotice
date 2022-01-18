@@ -5,7 +5,7 @@ FILE_NAME="vnotice"
 CONFIGFILE=".config"
 INSTALLPATH=~/bin/ohtoai/vnotice/
 CONFIGFILE=.config
-VERSION="v1.1.2"
+VERSION="v1.1.3"
 
 ######### message function #########
 function info()
@@ -118,7 +118,7 @@ function main()
     fi
 
     if [ ! ${#echo_message[*]} -lt 1 ]; then
-        message=${message}`echo $echo_message`
+        message=${message}`echo ${echo_message[*]}`
 
         json_msg="{ \"msgtype\": \"markdown\", \"markdown\": { \"content\": \"${message}\" } }"; 
         # send message
