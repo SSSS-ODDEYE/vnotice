@@ -69,7 +69,9 @@ This project is licensed under the terms of the [MIT License](/LICENSE).
 
 ## FAQ
 
-[![Email](https://img.shields.io/badge/mail-zhu.thatboy@outlook.com-blue.svg?&style=for-the-badge)](mailto:zhu.thatboy@outlook.com?subject=Feedback&body=This%20is%20a%20test%20feedback.)
+[![OhtoAi](https://img.shields.io/badge/mail-OhtoAi-blue.svg?&style=for-the-badge&color=743837)](mailto:zhu.thatboy@outlook.com?subject=Feedback&body=This%20is%20a%20test%20feedback.)  
+[![beiklive](https://img.shields.io/badge/mail-beiklive-blue.svg?&style=for-the-badge&color=D2FBFF)](mailto:boy_dongjie@foxmail.com?subject=Feedback&body=This%20is%20a%20test%20feedback.)
+
 
 ## Special Thanks
 <a href="https://github.com/Ohto-Ai">
