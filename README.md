@@ -74,6 +74,9 @@ vnotice -c use-multiple-parameters-demo.sh a --b "c" -d
 
 vnotice -m One, two, three
 # 推荐使用-m输出消息
+
+vnotice -r YYY-YYY-YYY-YYY -m Hi, Robot Y
+# 向指定机器人发送消息
 ```
 
 ## License
