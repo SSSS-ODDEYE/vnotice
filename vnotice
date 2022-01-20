@@ -1,9 +1,8 @@
 #!/bin/bash 
 
 # software info
-FILE_NAME="vnotice"
-CONFIGFILE=".config"
-INSTALLPATH=~/bin/ohtoai/vnotice/
+FILE_NAME=vnotice
+INSTALLPATH=`dirname \`readlink -f $0\``
 CONFIGFILE=.config
 VERSION="v1.1.3"
 
@@ -50,11 +49,17 @@ Repo:
 FLAG_ShowOutPut=false
 FLAG_ShowFormat=true
 
+
+if [ $# -eq 1 ]; then
+    echo ${VERSION}
+    exit 0
+fi
+
 # load setting
-if [ -f $INSTALLPATH$CONFIGFILE ]; then
-    source $INSTALLPATH$CONFIGFILE
+if [ -f $INSTALLPATH/$CONFIGFILE ]; then
+    source $INSTALLPATH/$CONFIGFILE
 else
-    warning Missing config!
+    warning Missing config! Expected location $INSTALLPATH/$CONFIGFILE
 fi
 CURRENT_ROBOT_ID=$ROBOT_ID
 
@@ -89,10 +94,6 @@ function main()
                 info "Set command \"${command[*]}\""
                 break
                 ;;
-            -v | --version)
-                echo ${VERSION}
-                exit 0
-                ;;
             -u | --only-output)
                 FLAG_ShowFormat=false
                 info "Show output only"
@@ -107,6 +108,11 @@ function main()
                 done
                 info "Set message \"${echo_message[*]}\""
                 break
+                ;;
+            --update)
+                info "Updating..."
+                make -f $INSTALLPATH/Makefile update
+                exit 0
                 ;;
             *)
                 error "Unknown parameter \"${@:i:1}\""

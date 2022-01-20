@@ -2,7 +2,6 @@
 ############################ vnotice ###################################
 ########################################################################
 APPNAME = vnotice
-INSTALLPATH = ~/bin/ohtoai/vnotice/
 CONFIGFILE = .config
 ROBOT_ID = $(shell if [ -f $(CONFIGFILE) ]; then  grep -Po '(?<=ROBOT_ID=).*' $(CONFIGFILE) ;fi)
 
@@ -20,13 +19,10 @@ ifeq ($(ROBOT_ID),)
 	$(error Install failed.)
 endif
 	@echo "Config ROBOT_ID : \033[34m$(ROBOT_ID)\033[0m"
-	@if [ ! -d $(INSTALLPATH) ]; then mkdir -p $(INSTALLPATH); fi
-	@cp $(APPNAME) $(INSTALLPATH)
-	@chmod a+x $(INSTALLPATH)$(APPNAME)
-	@echo ROBOT_ID=$(ROBOT_ID) > $(INSTALLPATH)$(CONFIGFILE)
-	@sudo ln -sf $(INSTALLPATH)$(APPNAME) /usr/bin/
+	@echo ROBOT_ID=$(ROBOT_ID) > $(CONFIGFILE)
+	@sudo ln -sf `pwd`/$(APPNAME) /usr/bin/
 	@echo "Run \`\033[35m$(APPNAME)\033[0m \033[34m--help\033[0m\` for help."
-	@echo "\033[35m$(APPNAME)\033[0m installed at \033[34m$(INSTALLPATH)$(APPNAME)\033[0m."
+	@echo "\033[35m$(APPNAME)\033[0m installed at \033[34m`pwd`/$(APPNAME)\033[0m."
 
 .PHONY: version
 version: $(APPNAME)
@@ -35,7 +31,7 @@ version: $(APPNAME)
 .PHONY: update
 update: 
 	@git pull -f
-	@git checkout master
+	@git checkout main
 	@$(MAKE) install
 
 .PHONY: uninstall
