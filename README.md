@@ -42,25 +42,38 @@ make install ROBOT_ID=XXXX-XXXX-XXXX-XXXX
 
 ## Update
 ```bash
-make update
+# 使用vnotice升级
+vnotice --update # v1.1.4及以上可用
+
+# 使用make升级
+cd `dirname \`readlink -f \\\`which vnotice\\\`\`` # 进入vnotice目录
+make update # 升级vnotice
 ```
 
 ## Usage
-> 见 `vnotice --help`
+> `vnotice <tags> | {-c | --command}  {command} | {-m | --message} {message}`  
+> 详见 `vnotice --help`
 
 ### examples
+> 注意：大多数参数都拥有缩写和全称  
+> -v = --version          show version  
+> -m = --message          show message without command  
+
 ```bash
-lunch-long-time-build-demo.sh; vnotice -u -c echo lunch finished, return $?
+lunch-long-time-build-demo.sh; vnotice -m lunch finished, return $?
 # 针对预期运行时间较长的脚本可以设置提醒
 
-vnotice -c view-status-demo.sh && vnotice -u -c echo view success || vnotice -u -c echo view failed
+lunch-long-time-build-demo.sh; vnotice -u -c echo lunch finished, return $?
+# 也可以使用echo指令发送消息
+
+vnotice -c view-status-demo.sh && vnotice -m  view success || vnotice -m view failed
 # 可以使用 -c 直接执行指令，执行完毕会返回指令结果，并被后续指令继续使用
 
 vnotice -c use-multiple-parameters-demo.sh a --b "c" -d
 # -c 不限制后续参数
 
 vnotice -m One, two, three
-# -m 输出消息
+# 推荐使用-m输出消息
 ```
 
 ## License
