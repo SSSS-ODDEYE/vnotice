@@ -34,6 +34,7 @@ Description:
     \033[34m-u\033[0m | \033[34m--only-output \033[0m     show output only
     \033[34m-c\033[0m | \033[34m--command     \033[0m     set commands
     \033[34m-h\033[0m | \033[34m--help        \033[0m     show help
+         \033[34m--update      \033[0m     update
     \033[34m-m\033[0m | \033[34m--message     \033[0m     show message without command
 e.g.
     \033[35mvnotice\033[0m \033[34m-c ls -l\033[0m
