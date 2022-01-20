@@ -22,11 +22,11 @@ endif
 	@echo ROBOT_ID=$(ROBOT_ID) > $(CONFIGFILE)
 	@sudo ln -sf `pwd`/$(APPNAME) /usr/bin/
 	@echo "Run \`\033[35m$(APPNAME)\033[0m \033[34m--help\033[0m\` for help."
-	@echo "\033[35m$(APPNAME)\033[0m installed at \033[34m`pwd`/$(APPNAME)\033[0m."
+	@echo "\033[35m$(APPNAME) `./$(APPNAME) --version`\033[0m installed at \033[34m`pwd`/$(APPNAME)\033[0m."
 
 .PHONY: version
 version: $(APPNAME)
-	@./$(APPNAME) -v
+	@./$(APPNAME) --version
 
 .PHONY: update
 update: 
