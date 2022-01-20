@@ -57,6 +57,7 @@ make update # 升级vnotice
 ### examples
 > 注意：大多数参数都拥有缩写和全称  
 > -v = --version          show version  
+> -c = --command          set commands  
 > -m = --message          show message without command  
 
 ```bash
@@ -73,9 +74,10 @@ vnotice -c use-multiple-parameters-demo.sh a --b "c" -d
 # -c 不限制后续参数
 
 vnotice -m One, two, three
+vnotice --message One, two, three!!!
 # 推荐使用-m输出消息
 
-vnotice -r YYY-YYY-YYY-YYY -m Hi, Robot Y
+vnotice --robot YYY-YYY-YYY-YYY --message Hi, Robot Y
 # 向指定机器人发送消息
 ```
 
