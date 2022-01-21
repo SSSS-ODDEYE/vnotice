@@ -40,6 +40,11 @@ vnotice是一个企业微信机器人消息推送脚本
 git clone git@github.com:Ohto-Ai/vnotice
 make install ROBOT_ID=XXXX-XXXX-XXXX-XXXX
 ```
+### 如何获取一个机器人并拿到ID？
+![](https://assets.ohtoai.top/img/ohtoai/202201210935609.png)
+![](https://assets.ohtoai.top/img/ohtoai/202201210937686.png)
+![](https://assets.ohtoai.top/img/ohtoai/202201210938112.png)
+![](https://assets.ohtoai.top/img/ohtoai/202201210939388.png)
 
 ## Update
 ```bash
