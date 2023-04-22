@@ -1,0 +1,58 @@
+name: Cross-platform CI
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ci.yaml'
+      - 'src/*'
+      - 'inc/*'
+      - 'CMakeLists.txt'
+      - '*.cmake'
+  pull_request:
+    paths:
+      - '.github/workflows/ci.yaml'
+      - 'src/*'
+      - 'inc/*'
+      - 'CMakeLists.txt'
+      - '*.cmake'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+        fetch-depth: 1
+    - name: Build
+      id: build
+      shell: bash
+      run: |
+        cmake -B build
+        cmake --build build --config Release --target install -j8
+    - name: Test
+      id: test
+      shell: bash
+      run: |
+        cd build/test/
+        ctest -C Release --output-on-failure
+    - name: Package
+      id: package
+      shell: bash
+      run: |
+        cmake --build build --config Release --target package -j8
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
