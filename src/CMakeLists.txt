@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 17)
 # set project maintainer and contact
 set(PROJECT_MAINTAINER "OhtoAi")
 set(PROJECT_CONTACT "zhu.thatboy@outlook.com")
-set(PROJECT_DESCRIPTION "企业微信机器人消息推送脚本")
+set(PROJECT_DESCRIPTION "企业微信/飞书机器人消息推送工具")
 set(PROJECT_DEBIAN_DEPENDENCIES)
 set(PROJECT_HOMEPAGE "https://github.com/SSSS-ODDEYE/vnotice/")
 
