@@ -6,8 +6,8 @@ namespace ohtoai::vnotice
     struct message_template
     {
         std::string alias;
-        std::string file;
+        std::string content;
         std::string type;
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(message_template, alias, file, type)
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(message_template, alias, content, type)
     };
 }

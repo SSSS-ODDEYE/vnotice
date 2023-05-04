@@ -1,16 +1,21 @@
-#include "client.h"
-#include <spdlog/fmt/fmt.h>
+#include "http_robot_client.h"
+#include <spdlog/spdlog.h>
 
 namespace ohtoai::vnotice
 {
-    class qywechat_client : public client
+    class qywechat_client : public http_robot_client
     {
     private:
     public:
+        qywechat_client()
+        {
+            config_http_url("https://qyapi.weixin.qq.com", "/cgi-bin/webhook/send?key={robot.id}");
+        }
         void send(const robot &r, const message_template &m, const nlohmann::json &d) override
         {
-            fmt::print("qywechat_client::send\n");
+            spdlog::info("qywechat_client::send: robot: {}", nlohmann::json(r).dump());
+            http_robot_client::send(r, m, d);            
         }
     };
-    static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::qywechat_client> registrar("qywechat");
+    inline static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::qywechat_client> registrar("qywechat");
 }

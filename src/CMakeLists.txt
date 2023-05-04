@@ -46,6 +46,7 @@ configure_file(
 # Add source files
 set(SOURCES
     main.cpp
+    client/http_robot_client.cpp
     client/feishu_client.cpp
     client/qywechat_client.cpp
 )

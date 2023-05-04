@@ -25,9 +25,9 @@ int main(int argc, char **argv)
 
     argparse::ArgumentParser send_command("send", "", argparse::default_arguments::help);
     send_command.add_description("Send message to robot");
-    send_command.add_argument("robot")
+    send_command.add_argument("-R", "--robot")
                 .help("Specify the robot");
-    send_command.add_argument("message")
+    send_command.add_argument("-M", "--message")
                 .help("Specify the message");
 
     argparse::ArgumentParser robot_command("robot", "", argparse::default_arguments::help);
@@ -65,14 +65,14 @@ int main(int argc, char **argv)
         std::exit(1);
     }
 
-    auto robot = ohtoai::vnotice::client_factory::instance().product("qywechat");
+    auto robot = ohtoai::vnotice::client_factory::instance().product("feishu");
 
     if (robot == nullptr)
     {
         fmt::print(stderr, "Robot type not found\n");
         std::exit(1);
     }
-    robot->send(ohtoai::vnotice::robot{"", "", ""}, ohtoai::vnotice::message_template{"", ""}, nlohmann::json{});
+    robot->send({}, {}, {});
 
     std::cout << "Hello, World!" << std::endl;
     return 0;
