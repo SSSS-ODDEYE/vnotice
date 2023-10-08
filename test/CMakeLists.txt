@@ -10,8 +10,14 @@ find_package(Threads REQUIRED)
 # Add test files
 file(GLOB test_files "*.test.cpp")
 foreach (test_file ${test_files})
+    set(SOURCES
+        ${test_file}
+        ../src/client/http_robot_client.cpp
+        ../src/client/feishu_client.cpp
+        ../src/client/qywechat_client.cpp
+    )
     get_filename_component(test_name ${test_file} NAME_WLE)
-    add_executable(${test_name} ${test_file})
+    add_executable(${test_name} ${SOURCES})
     add_test(NAME ${test_name} COMMAND ${test_name})
     target_link_libraries (${test_name} Threads::Threads)
 endforeach ()

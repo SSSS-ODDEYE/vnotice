@@ -5,6 +5,7 @@ namespace ohtoai::vnotice
 {
     class qywechat_client : public http_robot_client
     {
+        OHTOAI_DEFINE_CLASS(qywechat_client)
     private:
     public:
         qywechat_client()
@@ -17,5 +18,5 @@ namespace ohtoai::vnotice
             http_robot_client::send(r, m, d);            
         }
     };
-    inline static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::qywechat_client> registrar("qywechat");
+    inline static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::qywechat_client> registrar(qywechat_client::static_class_name());
 }

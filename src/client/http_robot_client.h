@@ -12,6 +12,7 @@ namespace ohtoai::vnotice
 {
     class http_robot_client : public client
     {
+        OHTOAI_DEFINE_CLASS(http_robot_client)
     private:
         std::unique_ptr<httplib::Client> cli;
         std::string path_template;

@@ -55,25 +55,21 @@ int main(int argc, char **argv)
     program.add_subparser(robot_command);
     program.add_subparser(execute_command);
 
-    try
-    {
+    try {
         program.parse_args(argc, argv);
     }
-    catch (const std::exception &e)
-    {
+    catch (const std::exception &e) {
         fmt::print(stderr, "Exception occur when call `parse_args` ({})\n", e.what());
         std::exit(1);
     }
 
     auto robot = ohtoai::vnotice::client_factory::instance().product("feishu");
-
-    if (robot == nullptr)
-    {
+    if (robot == nullptr) {
         fmt::print(stderr, "Robot type not found\n");
         std::exit(1);
     }
-    robot->send({}, {}, {});
 
-    std::cout << "Hello, World!" << std::endl;
+    fmt::print("robot.class_name = {}", robot->class_name());
+    robot->send({}, {}, {});
     return 0;
 }

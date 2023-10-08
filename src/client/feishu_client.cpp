@@ -5,6 +5,7 @@ namespace ohtoai::vnotice
 {
     class feishu_client : public http_robot_client
     {
+        OHTOAI_DEFINE_CLASS(feishu_client)
     private:
     public:
         feishu_client()
@@ -17,5 +18,5 @@ namespace ohtoai::vnotice
             http_robot_client::send(r, m, d);            
         }
     };
-    inline static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::feishu_client> registrar("feishu");
+    inline static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::feishu_client> registrar(feishu_client::static_class_name());
 }
