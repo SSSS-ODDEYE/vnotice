@@ -2,12 +2,12 @@
 #include <spdlog/spdlog.h>
 #include <inja/inja.hpp>
 
-static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::http_robot_client> registrar(http_robot_client::static_class_name());
+static ohtoai::ProductRegistrar<ohtoai::vnotice::client, ohtoai::vnotice::http_robot_client> registrar(ohtoai::vnotice::http_robot_client::static_class_name());
 
 void ohtoai::vnotice::http_robot_client::config_http_url(const std::string &scheme_host_port, const std::string &path_template)
 {
     SPDLOG_DEBUG("http_robot_client::config_http_url");
-    
+
     cli = std::make_unique<httplib::Client>(scheme_host_port.c_str());
     this->path_template = path_template;
 }
