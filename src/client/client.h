@@ -2,10 +2,15 @@
 #include "../inc/message_template.h"
 #include <factory.hpp>
 
+#define OHTOAI_DEFINE_CLASS(x) \
+    public:                                                 \
+        virtual const char* class_name() { return (#x); }
+
 namespace ohtoai::vnotice
 {
     class client
     {
+        OHTOAI_DEFINE_CLASS(client)
     private:
         /* data */
     public:
