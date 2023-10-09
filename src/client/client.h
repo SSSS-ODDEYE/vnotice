@@ -23,7 +23,9 @@ namespace ohtoai::vnotice
         /// @param m specify the message template
         /// @param d data from runtime
         virtual void send(const robot &r, const message_template &m, const nlohmann::json &d) = 0;
-    };
 
-    using client_factory = ProductFactory<client>;
+        static auto create(const std::string& _class_name) {
+            return ohtoai::ProductFactory<client>::instance().product(_class_name);
+        }
+    };
 }

@@ -63,13 +63,13 @@ int main(int argc, char **argv)
         std::exit(1);
     }
 
-    auto robot = ohtoai::vnotice::client_factory::instance().product("feishu");
+    auto robot = ohtoai::vnotice::client::create("feishu_client");
     if (robot == nullptr) {
         fmt::print(stderr, "Robot type not found\n");
         std::exit(1);
     }
 
-    fmt::print("robot.class_name = {}", robot->class_name());
+    fmt::print("robot.class_name = {}\n", robot->class_name());
     robot->send({}, {}, {});
     return 0;
 }
