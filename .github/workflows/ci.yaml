@@ -56,8 +56,19 @@ jobs:
         cmake --build build --config Debug -j8
         cd build/test/
         ctest --progress
-        lcov -c -d . -o coverage.info
-        genhtml main_coverage.info --output-directory out
+    - name: Setup LCOV
+      if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
+      uses: hrishikesh-kadam/setup-lcov@v1
+    - name: Report code coverage
+      if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
+      uses: zgosalvez/github-actions-report-lcov@v3
+      with:
+        coverage-files: build/test/.*.info
+        minimum-coverage: 80
+        artifact-name: code-coverage-report
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: src
+        update-comment: true
     - name: Package
       id: package
       shell: bash
