@@ -60,16 +60,6 @@ jobs:
         lcov --capture --directory build/test --exclude '/usr/*' --output-file lcov_coverage.info
         lcov --remove lcov_coverage.info '/usr/*' 'test/*' 'inc/*' 'build/*' --output-file lcov_coverage.info
         lcov --list lcov_coverage.info
-    - name: Report code coverage
-      if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
-      uses: zgosalvez/github-actions-report-lcov@v3
-      with:
-        coverage-files: lcov.*.info
-        minimum-coverage: 80
-        artifact-name: code-coverage-report
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        working-directory: src
-        update-comment: true
     - name: Package
       id: package
       shell: bash
