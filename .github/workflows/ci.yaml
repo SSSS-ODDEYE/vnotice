@@ -46,8 +46,7 @@ jobs:
       id: test
       shell: bash
       run: |
-        cd build/test/
-        ctest -C Release --output-on-failure
+        ctest -C Release --output-on-failure --test-dir build/test
     - name: Setup LCOV
       if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
       uses: hrishikesh-kadam/setup-lcov@v1
