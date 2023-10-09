@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.10)
 project(test)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake-modules)
-
 add_definitions(-DCATCH_CONFIG_MAIN)
-include(CodeCoverage)
-append_coverage_compiler_flags()
+
+if(LINUX)
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake-modules)
+    include(CodeCoverage)
+    append_coverage_compiler_flags()
+endif(LINUX)
+
 enable_testing()
 
 find_package(OpenSSL REQUIRED)
