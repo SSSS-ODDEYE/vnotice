@@ -48,22 +48,23 @@ jobs:
       run: |
         cd build/test/
         ctest -C Release --output-on-failure
-    - name: Coverage
-      id: coverage
+    - name: Setup LCOV
+      if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
+      uses: hrishikesh-kadam/setup-lcov@v1
+    - name: Generate code coverage report
       if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
       shell: bash
       run: |
         cmake --build build --config Debug -j8
-        cd build/test/
-        ctest --progress
-    - name: Setup LCOV
-      if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
-      uses: hrishikesh-kadam/setup-lcov@v1
+        ctest --test-dir build/test
+        lcov --capture --directory build/test --exclude '/usr/*' --output-file lcov_coverage.info
+        lcov --remove lcov_coverage.info '/usr/*' 'test/*' 'inc/*' 'build/*' --output-file lcov_coverage.info
+        lcov --list lcov_coverage.info
     - name: Report code coverage
       if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
       uses: zgosalvez/github-actions-report-lcov@v3
       with:
-        coverage-files: build/test/.*.info
+        coverage-files: lcov.*.info
         minimum-coverage: 80
         artifact-name: code-coverage-report
         github-token: ${{ secrets.GITHUB_TOKEN }}
