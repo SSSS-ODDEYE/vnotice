@@ -1,14 +1,33 @@
 #include <catch2/catch.hpp>
 #include "client/client.h"
 
-TEST_CASE("Client type is correct", "[single-file]" ) {
-    std::string robot_list[] = {"http_robot_client", "feishu_client", "qywechat_client"};
-    for (auto robot_name : robot_list) {
-        auto robot = ohtoai::vnotice::client::create(robot_name);
-        REQUIRE(robot != nullptr);
-        REQUIRE(robot->class_name() == robot_name);
-    }
+TEST_CASE("Verify all excepted client types are self-registered") {
+    std::vector<std::string> excepted_client_names = {"http_robot_client", "qywechat_client", "feishu_client"};
+    auto client_names = ohtoai::vnotice::client::get_names();
 
-    auto not_exist_robot = ohtoai::vnotice::client::create("not_exist_robot");
-    REQUIRE(not_exist_robot == nullptr);
+    REQUIRE(client_names.size() == excepted_client_names.size());
+    for (auto excepted_client_name : excepted_client_names) {
+        bool found = false;
+        for (auto client_name : client_names) {
+            if (excepted_client_name == client_name) {
+                found = true;
+                break;
+            }
+        }
+        REQUIRE(found);
+    }
+}
+
+TEST_CASE("Verify client can be created by class name") {
+    auto client_names = ohtoai::vnotice::client::get_names();
+    for (auto client_name : client_names) {
+        auto client = ohtoai::vnotice::client::create(client_name);
+        REQUIRE(client != nullptr);
+        REQUIRE(client->class_name() == client_name);
+    }
+}
+
+TEST_CASE("Verify non-exist client cannot be created") {
+    auto client = ohtoai::vnotice::client::create("non-exist-client@#$%^&*()");
+    REQUIRE(client == nullptr);
 }

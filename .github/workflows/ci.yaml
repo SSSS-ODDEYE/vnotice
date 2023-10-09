@@ -48,6 +48,16 @@ jobs:
       run: |
         cd build/test/
         ctest -C Release --output-on-failure
+    - name: Coverage
+      id: coverage
+      if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
+      shell: bash
+      run: |
+        cmake --build build --config Debug -j8
+        cd build/test/
+        ctest --progress
+        lcov -c -d . -o coverage.info
+        genhtml main_coverage.info --output-directory out
     - name: Package
       id: package
       shell: bash
