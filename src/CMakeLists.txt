@@ -63,15 +63,11 @@ find_package(Threads REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 
 # Link openssl
-if(MACOS)
-    set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl" CACHE STRING "openssl root" FORCE)
-endif(MACOS)
-find_package(OpenSSL QUIET)
-if (MACOS OR LINUX)
-    target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
-elseif(WINDOWS)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ws2_32)
-endif()
+if(WINDOWS)
+    set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL" CACHE STRING "openssl root" FORCE)
+endif(WINDOWS)
+find_package(OpenSSL REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
