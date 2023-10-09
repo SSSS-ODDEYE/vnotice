@@ -58,16 +58,14 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE inc)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/generated/inc)
 
-# Link thread and ssl lib
-find_package(Threads REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-
-# Link openssl
 if(WINDOWS)
     set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL" CACHE STRING "openssl root" FORCE)
 endif(WINDOWS)
 find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
