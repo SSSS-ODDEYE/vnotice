@@ -48,6 +48,22 @@ namespace ohtoai
                 return nullptr;
         }
 
+        bool hasProduct(std::string name) const {
+            return productRegistry_.find(name) != productRegistry_.end();
+        }
+
+        std::vector<std::string> getProductNames() {
+            std::vector<std::string> keys;
+
+            std::transform(
+                productRegistry_.begin(),
+                productRegistry_.end(),
+                std::back_inserter(keys),
+                [](const typename std::map<std::string, IProductRegistrar<ProductType_t>*>::value_type &pair){return pair.first;});
+
+            return keys;
+        }
+
     protected:
         ProductFactory() = default;
         ~ProductFactory() = default;

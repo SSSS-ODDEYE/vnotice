@@ -1,5 +1,5 @@
-#include "../inc/robot.h"
-#include "../inc/message_template.h"
+#include <robot.h>
+#include <message_template.h>
 #include <factory.hpp>
 
 #define OHTOAI_DEFINE_CLASS(x)                                              \
@@ -26,6 +26,14 @@ namespace ohtoai::vnotice
 
         static auto create(const std::string& _class_name) {
             return ohtoai::ProductFactory<client>::instance().product(_class_name);
+        }
+
+        static auto has(const std::string& _class_name) {
+            return ohtoai::ProductFactory<client>::instance().hasProduct(_class_name);
+        }
+
+        static auto get_names() {
+            return ohtoai::ProductFactory<client>::instance().getProductNames();
         }
     };
 }

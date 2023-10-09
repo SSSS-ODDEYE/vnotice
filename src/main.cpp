@@ -11,9 +11,9 @@
  *          type qywechat/feishu
  *      message_template
  *          type qywechat/feishu
- *          
+ *
  *      default robot id/alias
- * 
+ *
 */
 
 int main(int argc, char **argv)
@@ -62,6 +62,9 @@ int main(int argc, char **argv)
         fmt::print(stderr, "Exception occur when call `parse_args` ({})\n", e.what());
         std::exit(1);
     }
+
+    auto names = ohtoai::vnotice::client::get_names();
+    fmt::print("clients = {}\n", fmt::join(names, ", "));
 
     auto robot = ohtoai::vnotice::client::create("feishu_client");
     if (robot == nullptr) {

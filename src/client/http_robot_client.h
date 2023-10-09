@@ -17,7 +17,7 @@ namespace ohtoai::vnotice
         std::unique_ptr<httplib::Client> cli;
         std::string path_template;
     public:
-    
+
         /// @brief set http url of robot
         /// @param scheme_host_port e.g.: https://qyapi.weixin.qq.com
         /// @param path_template e.g.: /cgi-bin/webhook/send?key={robot.id}
