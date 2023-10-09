@@ -36,10 +36,11 @@ jobs:
       with:
         submodules: 'true'
         fetch-depth: 1
-    - name: Test
+    - name: Build and Test
       id: test
       shell: bash
       run: |
+        cmake -B build
         cmake --build build --config Debug -j8
         ctest --build-config Release --output-on-failure --test-dir build/test
     - name: Setup LCOV
@@ -54,17 +55,12 @@ jobs:
         lcov --capture --directory build/test --exclude '/usr/*' --output-file lcov_coverage.info
         lcov --remove lcov_coverage.info "$(pwd)/inc/*" "$(pwd)/test/*" --output-file lcov_coverage.info
         lcov --list lcov_coverage.info
-    - name: Build
-      id: build
-      shell: bash
-      run: |
-        cmake -B build
-        cmake --build build --config Release --target install -j8
     - name: Package
       id: package
       shell: bash
       run: |
+        cmake -B build
         cmake --build build --config Release --target package -j8
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      if: ${{ matrix.os == 'windows-2019' || failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
