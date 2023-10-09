@@ -42,7 +42,7 @@ jobs:
       run: |
         cmake -B build
         cmake --build build --config Debug -j8
-        ctest --build-config Release --output-on-failure --test-dir build/test
+        ctest --build-config Debug --test-dir build/test --output-on-failure
     - name: Setup LCOV
       if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
       uses: hrishikesh-kadam/setup-lcov@v1
