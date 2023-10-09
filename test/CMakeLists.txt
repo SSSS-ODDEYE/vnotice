@@ -11,8 +11,6 @@ endif(LINUX)
 
 enable_testing()
 
-find_package(OpenSSL REQUIRED)
-find_package(Threads REQUIRED)
 add_subdirectory(${SOURCE_FOLDER}/client ${CMAKE_BINARY_DIR}/client)
 
 # Add test files

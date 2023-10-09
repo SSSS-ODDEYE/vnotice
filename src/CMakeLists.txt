@@ -45,9 +45,6 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE inc)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/generated/inc)
 
-find_package(OpenSSL REQUIRED)
-find_package(Threads REQUIRED)
-
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 target_link_libraries(${PROJECT_NAME} PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,client>")

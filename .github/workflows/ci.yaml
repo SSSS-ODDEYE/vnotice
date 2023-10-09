@@ -36,17 +36,12 @@ jobs:
       with:
         submodules: 'true'
         fetch-depth: 1
-    - name: Build
-      id: build
-      shell: bash
-      run: |
-        cmake -B build
-        cmake --build build --config Release --target install -j8
     - name: Test
       id: test
       shell: bash
       run: |
-        ctest -C Release --output-on-failure --test-dir build/test
+        cmake --build build --config Debug -j8
+        ctest --build-config Release --output-on-failure --test-dir build/test
     - name: Setup LCOV
       if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
       uses: hrishikesh-kadam/setup-lcov@v1
@@ -55,10 +50,16 @@ jobs:
       shell: bash
       run: |
         cmake --build build --config Debug -j8
-        ctest --test-dir build/test
+        ctest --build-config Debug --test-dir build/test
         lcov --capture --directory build/test --exclude '/usr/*' --output-file lcov_coverage.info
         lcov --remove lcov_coverage.info "$(pwd)/inc/*" "$(pwd)/test/*" --output-file lcov_coverage.info
         lcov --list lcov_coverage.info
+    - name: Build
+      id: build
+      shell: bash
+      run: |
+        cmake -B build
+        cmake --build build --config Release --target install -j8
     - name: Package
       id: package
       shell: bash
