@@ -66,4 +66,4 @@ jobs:
         cmake --build build --config Release --target package -j8
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      if: ${{ matrix.os == 'windows-2019' || failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
