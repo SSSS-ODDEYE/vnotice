@@ -32,14 +32,16 @@ int main(int argc, char **argv)
 
     argparse::ArgumentParser robot_command("robot", "", argparse::default_arguments::help);
     robot_command.add_description("Manage robot");
-    robot_command.add_argument("list")
-                .help("List all robots");
-    robot_command.add_argument("add")
-                .help("Add a robot");
-    robot_command.add_argument("remove")
-                .help("Remove a robot");
-    robot_command.add_argument("update")
-                .help("Update a robot");
+    argparse::ArgumentParser robot_list_command("list", "", argparse::default_arguments::help);
+    robot_list_command.add_description("List all robots");
+    argparse::ArgumentParser robot_remove_command("remove", "", argparse::default_arguments::help);
+    robot_remove_command.add_description("Remove a robot");
+    argparse::ArgumentParser robot_update_command("update", "", argparse::default_arguments::help);
+    robot_update_command.add_description("Update a robot");
+
+    robot_command.add_subparser(robot_list_command);
+    robot_command.add_subparser(robot_remove_command);
+    robot_command.add_subparser(robot_update_command);
 
     argparse::ArgumentParser execute_command("exec", "", argparse::default_arguments::help);
     execute_command.add_description("Execute a command");
