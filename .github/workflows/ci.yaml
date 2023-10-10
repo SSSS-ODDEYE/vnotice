@@ -71,12 +71,11 @@ jobs:
       with:
         # Comma separated list of coverage files to upload, supports globs. 
         file-pattern: '**/jacoco.xml,**/lcov.info'
+        # The GitHub token used to validate repository access when uploading coverage reports.
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-
-    # The GitHub token used to validate repository access when uploading coverage reports.
-    repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   package:
     name: Package
