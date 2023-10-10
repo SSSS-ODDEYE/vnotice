@@ -62,7 +62,6 @@ jobs:
     - name: Setup LCOV
       uses: hrishikesh-kadam/setup-lcov@v1
     - name: Generate code coverage report
-      if: ${{ matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
       shell: bash
       run: |
         cmake -B build -DCMAKE_BUILD_TYPE=Debug -DGENERATE_CODE_COVERAGE=ON
