@@ -3,12 +3,6 @@ project(test)
 
 add_definitions(-DCATCH_CONFIG_MAIN)
 
-if(LINUX)
-    list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake-modules)
-    include(CodeCoverage)
-    append_coverage_compiler_flags()
-endif(LINUX)
-
 enable_testing()
 
 add_subdirectory(${SOURCE_FOLDER}/client ${CMAKE_BINARY_DIR}/client)
@@ -22,8 +16,18 @@ foreach (test_file ${test_files})
     target_include_directories(${test_name} PRIVATE ${CMAKE_BINARY_DIR}/src/generated/inc)
     target_include_directories(${test_name} PRIVATE ${SOURCE_FOLDER}/inc)
     target_include_directories(${test_name} PRIVATE ${SOURCE_FOLDER})
-    target_link_libraries (${test_name} PRIVATE Threads::Threads)
-    target_link_libraries(${test_name} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+    target_link_libraries(${test_name} PRIVATE OpenSSL::SSL OpenSSL::Crypto Threads::Threads)
     target_link_libraries(${test_name} PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,client>")
     add_test(NAME ${test_name} COMMAND ${test_name})
+    list(APPEND test_list ${test_name})
 endforeach ()
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    include(CodeCoverage)
+    append_coverage_compiler_flags()
+    setup_target_for_coverage_lcov(NAME coverage
+        EXECUTABLE ctest --build-config Debug
+        BASE_DIRECTORY ${SOURCE_FOLDER}
+        EXCLUDE "/usr/*" "${CMAKE_SOURCE_DIR}/inc/*" "${CMAKE_SOURCE_DIR}/test/*" "${CMAKE_SOURCE_DIR}/build/*"
+        DEPENDENCIES ${test_list})
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")

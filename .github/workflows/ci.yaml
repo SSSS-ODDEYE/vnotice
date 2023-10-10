@@ -40,7 +40,7 @@ jobs:
       id: test
       shell: bash
       run: |
-        cmake -B build
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug
         cmake --build build --config Debug -j8
         ctest --build-config Debug --test-dir build/test --output-on-failure
     - name: Setup LCOV
@@ -50,16 +50,14 @@ jobs:
       if: ${{ matrix.os == 'ubuntu-20.04' }} # Only run coverage on Ubuntu 20.04
       shell: bash
       run: |
-        cmake --build build --config Debug -j8
-        ctest --build-config Debug --test-dir build/test
-        lcov --capture --directory build/test --exclude '/usr/*' --output-file lcov_coverage.info
-        lcov --remove lcov_coverage.info "$(pwd)/inc/*" "$(pwd)/test/*" --output-file lcov_coverage.info
-        lcov --list lcov_coverage.info
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug
+        cmake --build build -j8 --target coverage --config Debug
+        lcov --list build/test/coverage.info
     - name: Package
       id: package
       shell: bash
       run: |
-        cmake -B build
+        cmake -B build -DCMAKE_BUILD_TYPE=Release
         cmake --build build --config Release --target package -j8
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3

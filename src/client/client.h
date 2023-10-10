@@ -2,9 +2,9 @@
 #include <message_template.h>
 #include <factory.hpp>
 
-#define OHTOAI_DEFINE_CLASS(x)                                              \
-    public:                                                                 \
-        virtual const char* class_name() { return static_class_name(); }    \
+#define OHTOAI_DEFINE_CLASS(x)                                                    \
+    public:                                                                       \
+        virtual const char* class_name() const { return static_class_name(); }    \
         static constexpr const char* static_class_name() { return (#x); }
 
 namespace ohtoai::vnotice
