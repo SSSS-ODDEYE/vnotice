@@ -93,7 +93,7 @@ jobs:
     - name: Generate code coverage report
       shell: bash
       run: |
-        lcov --list ${{ steps.strings.outputs.build-output-dir }}/coverage.info
+        lcov --list ${{ steps.strings.outputs.build-output-dir }}/test/coverage.info
     - uses: checkity/upload@v1
       with:
         file-pattern: '**/jacoco.xml,**/lcov.info'
