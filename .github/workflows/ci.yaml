@@ -43,13 +43,13 @@ jobs:
       shell: bash
       run: |
         cmake -B build -DCMAKE_BUILD_TYPE=Debug
-        cmake --build build --config Debug -j8
+        cmake --build build --config Debug --target install -j8
         ctest --build-config Debug --test-dir build/test --output-on-failure
     - name: Generate code coverage report
       shell: bash
       run: |
         cmake -B build -DCMAKE_BUILD_TYPE=Debug
-        cmake --build build -j8 --target coverage --config Debug
+        cmake --build build --config Debug --target coverage -j8
         lcov --list build/test/coverage.info
     - name: Package
       id: package
