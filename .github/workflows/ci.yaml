@@ -30,19 +30,31 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        build_type: [Debug, Release]
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules: 'true'
         fetch-depth: 0
-    - name: Build and Test
-      id: test
+    - name: Set reusable strings
+      id: strings
       shell: bash
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Debug
-        cmake --build build --config Debug --target install -j8
-        ctest --build-config Debug --test-dir build/test --output-on-failure
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "build-threads=8" >> "$GITHUB_OUTPUT"
+    - name: Config
+      shell: bash
+      run: |
+        cmake -B${{ steps.strings.outputs.build-output-dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+    - name: Build
+      shell: bash
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target install -j${{ build-threads }}
+    - name: Test
+      shell: bash
+      run: |
+        ctest --build-config ${{ matrix.build_type }} --test-dir ${{ steps.strings.outputs.build-output-dir }} --output-on-failure
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
@@ -53,25 +65,36 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
+        build_type: [Debug]
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules: 'true'
         fetch-depth: 0
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "build-threads=8" >> "$GITHUB_OUTPUT"
     - name: Setup LCOV
       uses: hrishikesh-kadam/setup-lcov@v1
+    - name: Config
+      shell: bash
+      run: |
+        cmake -B${{ steps.strings.outputs.build-output-dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DGENERATE_CODE_COVERAGE=ON
+    - name: Build
+      shell: bash
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target coverage -j${{ build-threads }}
     - name: Generate code coverage report
       shell: bash
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Debug -DGENERATE_CODE_COVERAGE=ON
-        cmake --build build --config Debug --target coverage -j8
-        lcov --list build/test/coverage.info
+        lcov --list ${{ steps.strings.outputs.build-output-dir }}/coverage.info
     - uses: checkity/upload@v1
       with:
-        # Comma separated list of coverage files to upload, supports globs. 
         file-pattern: '**/jacoco.xml,**/lcov.info'
-        # The GitHub token used to validate repository access when uploading coverage reports.
         repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
@@ -83,18 +106,27 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-2022]
+        build_type: [Release]
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules: 'true'
         fetch-depth: 0
-    - name: Package
-      id: package
+    - name: Set reusable strings
+      id: strings
       shell: bash
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Release
-        cmake --build build --config Release --target package -j8
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "build-threads=8" >> "$GITHUB_OUTPUT"
+    - name: Config
+      shell: bash
+      run: |
+        cmake -B${{ steps.strings.outputs.build-output-dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+    - name: Build
+      shell: bash
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target package -j${{ build-threads }}
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
