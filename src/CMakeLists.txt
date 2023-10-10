@@ -4,6 +4,11 @@ include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 git_describe(GIT_DESCRIBE --tags --always)
 git_get_tag(GIT_TAG --tags)
+
+if(NOT GIT_REFSPEC)
+    set(GIT_REFSPEC "unknown")
+endif(NOT GIT_REFSPEC)
+
 message(STATUS "GIT_REFSPEC\t${GIT_REFSPEC}")
 message(STATUS "GIT_SHA1\t${GIT_SHA1}")
 message(STATUS "GIT_DESCRIBE\t${GIT_DESCRIBE}")
