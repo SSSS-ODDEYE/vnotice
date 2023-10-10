@@ -1,10 +1,30 @@
 cmake_minimum_required(VERSION 3.10)
 
-# set version from git tag
-include(../cmake/version_from_git_tag.cmake)
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+git_describe(GIT_DESCRIBE --tags --always)
+git_get_tag(GIT_TAG --tags)
+message(STATUS "GIT_REFSPEC\t${GIT_REFSPEC}")
+message(STATUS "GIT_SHA1\t${GIT_SHA1}")
+message(STATUS "GIT_DESCRIBE\t${GIT_DESCRIBE}")
+
+# get version from git describe
+string(REGEX REPLACE "^v([0-9]+)\\..*" "\\1" PROJECT_VERSION_MAJOR "${GIT_DESCRIBE}")
+string(REGEX REPLACE "^v[0-9]+\\.([0-9]+).*" "\\1" PROJECT_VERSION_MINOR "${GIT_DESCRIBE}")
+string(REGEX REPLACE "^v[0-9]+\\.[0-9]+\\.([0-9]+).*" "\\1" PROJECT_VERSION_PATCH "${GIT_DESCRIBE}")
+string(REGEX REPLACE "^v[0-9]+\\.[0-9]+\\.[0-9]+\\-([0-9]+).*" "\\1" PROJECT_VERSION_TWEAK "${GIT_DESCRIBE}")
+if(PROJECT_VERSION_TWEAK STREQUAL GIT_DESCRIBE)
+    set(PROJECT_VERSION_TWEAK 0)
+endif(PROJECT_VERSION_TWEAK STREQUAL GIT_DESCRIBE)
+
+if(PROJECT_VERSION_TWEAK)
+    set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK}")
+else()
+    set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+endif(PROJECT_VERSION_TWEAK)
 
 # set the project name and version
-project(${ProjectId} LANGUAGES CXX VERSION ${BUILD_VERSION_MAJOR}.${BUILD_VERSION_MINOR}.${BUILD_VERSION_PATCH})
+project(${ProjectId} LANGUAGES CXX VERSION ${PROJECT_VERSION})
 
 # set project maintainer and contact
 set(PROJECT_MAINTAINER "OhtoAi")
@@ -52,5 +72,32 @@ install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 
 # set install target
 if (LINUX OR WINDOWS)
-    include(../cmake/package.cmake)
+    install(TARGETS ${PROJECT_NAME})
+    if(LINUX)
+        set(CPACK_GENERATOR "DEB")
+        set(CPACK_DEBIAN_PACKAGE_NAME ${PROJECT_NAME})
+        set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${PROJECT_MAINTAINER})
+        set(CPACK_DEBIAN_PACKAGE_DEPENDS ${PROJECT_DEBIAN_DEPENDENCIES})
+        set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${PROJECT_HOMEPAGE})
+    elseif(WINDOWS)
+        set(CPACK_GENERATOR "NSIS")
+        set(CPACK_NSIS ${PROJECT_NAME})
+        set(CPACK_NSIS_MUI_ICON ${PROJECT_SOURCE_DIR}/res/icon.ico)
+        set(CPACK_NSIS_MUI_UNIICON ${PROJECT_SOURCE_DIR}/res/icon.ico)
+        set(CPACK_NSIS_MODIFY_PATH ON)
+        set(CPACK_NSIS_DISPLAY_NAME ${PROJECT_NAME})
+        set(CPACK_NSIS_HELP_LINK ${PROJECT_HOMEPAGE})
+        set(CPACK_NSIS_URL_INFO_ABOUT ${PROJECT_HOMEPAGE})
+        set(CPACK_NSIS_CONTACT ${PROJECT_CONTACT})
+    else()
+        message(FATAL_ERROR "Unsupported platform")
+    endif()
+
+    set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+    set(CPACK_PACKAGE_CONTACT ${PROJECT_CONTACT})
+    set(CPACK_PACKAGE_DESCRIPTION ${PROJECT_DESCRIPTION})
+    set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+    set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+    set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH}.${PROJECT_VERSION_TWEAK})
+    include(CPack)
 endif()

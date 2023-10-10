@@ -7,8 +7,9 @@ TEST_CASE("Version info not empty", "[single-file]" ) {
     REQUIRE(VersionHelper::getInstance().Email != "");
     REQUIRE(VersionHelper::getInstance().Description != "");
     REQUIRE(VersionHelper::getInstance().Version != "");
-    REQUIRE(VersionHelper::getInstance().CommitHash != "");
-    REQUIRE(VersionHelper::getInstance().CommitDate != "");
+    REQUIRE(VersionHelper::getInstance().GitDescribe != "");
+    REQUIRE(VersionHelper::getInstance().GitSha1 != "");
+    REQUIRE(VersionHelper::getInstance().GitRefSpec != "");
     REQUIRE(VersionHelper::getInstance().BuildDate != "");
     REQUIRE(VersionHelper::getInstance().BuildTime != "");
 }
