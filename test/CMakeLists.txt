@@ -22,7 +22,7 @@ foreach (test_file ${test_files})
     list(APPEND test_list ${test_name})
 endforeach ()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(LINUX and CMAKE_BUILD_TYPE STREQUAL "Debug")
     include(CodeCoverage)
     append_coverage_compiler_flags()
     setup_target_for_coverage_lcov(NAME coverage
@@ -30,4 +30,4 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         BASE_DIRECTORY ${SOURCE_FOLDER}
         EXCLUDE "/usr/*" "${CMAKE_SOURCE_DIR}/inc/*" "${CMAKE_SOURCE_DIR}/test/*" "${CMAKE_SOURCE_DIR}/build/*"
         DEPENDENCIES ${test_list})
-endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
+endif(LINUX and CMAKE_BUILD_TYPE STREQUAL "Debug")
