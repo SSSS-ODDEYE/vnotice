@@ -41,7 +41,8 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
+        echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
         echo "build-parallel=8" >> "$GITHUB_OUTPUT"
     - name: Config
       shell: bash
@@ -76,7 +77,8 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
+        echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
         echo "build-parallel=8" >> "$GITHUB_OUTPUT"
     - name: Setup LCOV
       uses: hrishikesh-kadam/setup-lcov@v1
@@ -117,7 +119,8 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
+        echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
         echo "build-parallel=8" >> "$GITHUB_OUTPUT"
     - name: Config
       shell: bash
