@@ -36,8 +36,6 @@ jobs:
       with:
         submodules: 'true'
         fetch-depth: 0
-    - name: Setup LCOV
-      uses: hrishikesh-kadam/setup-lcov@v1
     - name: Build and Test
       id: test
       shell: bash
@@ -45,13 +43,47 @@ jobs:
         cmake -B build -DCMAKE_BUILD_TYPE=Debug
         cmake --build build --config Debug --target install -j8
         ctest --build-config Debug --test-dir build/test --output-on-failure
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
+  coverage:
+    name: Coverage
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+        fetch-depth: 0
+    - name: Setup LCOV
+      uses: hrishikesh-kadam/setup-lcov@v1
     - name: Generate code coverage report
       if: ${{ matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
       shell: bash
       run: |
-        cmake -B build -DCMAKE_BUILD_TYPE=Debug
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug -DGENERATE_CODE_COVERAGE=ON
         cmake --build build --config Debug --target coverage -j8
         lcov --list build/test/coverage.info
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
+  package:
+    name: Package
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, windows-2022]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+        fetch-depth: 0
     - name: Package
       id: package
       shell: bash
