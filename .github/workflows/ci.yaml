@@ -46,7 +46,7 @@ jobs:
         cmake --build build --config Debug --target install -j8
         ctest --build-config Debug --test-dir build/test --output-on-failure
     - name: Generate code coverage report
-      if: ${{ matrix.os == 'ubuntu-20.04' }} || ${{ matrix.os == 'ubuntu-22.04' }}
+      if: ${{ matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-22.04' }}
       shell: bash
       run: |
         cmake -B build -DCMAKE_BUILD_TYPE=Debug
