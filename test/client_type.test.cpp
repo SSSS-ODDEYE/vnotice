@@ -3,7 +3,7 @@
 
 TEST_CASE("Verify all excepted client types are self-registered") {
     std::vector<std::string> excepted_client_names = {"http_robot_client", "qywechat_client", "feishu_client"};
-    auto client_names = ohtoai::vnotice::client::get_names();
+    auto client_names = ohtoai::vnotice::client::support_client_class_names();
 
     REQUIRE(client_names.size() == excepted_client_names.size());
     for (auto excepted_client_name : excepted_client_names) {
@@ -19,7 +19,7 @@ TEST_CASE("Verify all excepted client types are self-registered") {
 }
 
 TEST_CASE("Verify client can be created by class name") {
-    auto client_names = ohtoai::vnotice::client::get_names();
+    auto client_names = ohtoai::vnotice::client::support_client_class_names();
     for (auto client_name : client_names) {
         auto client = ohtoai::vnotice::client::create(client_name);
         REQUIRE(client != nullptr);

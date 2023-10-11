@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         std::exit(1);
     }
 
-    auto names = ohtoai::vnotice::client::get_names();
+    auto names = ohtoai::vnotice::client::support_client_class_names();
     fmt::print("clients = {}\n", fmt::join(names, ", "));
 
     auto robot = ohtoai::vnotice::client::create("feishu_client");

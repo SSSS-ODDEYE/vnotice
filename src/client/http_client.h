@@ -3,16 +3,13 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <cpp-httplib/httplib.h>
 
-namespace httplib
-{
+namespace httplib {
     class Client;
 }
 
-namespace ohtoai::vnotice
-{
-    class http_robot_client : public client
-    {
-        OHTOAI_DEFINE_CLASS(http_robot_client)
+namespace ohtoai::vnotice {
+    class http_client : public client {
+        OHTOAI_DEFINE_CLASS(http_client)
     private:
         std::unique_ptr<httplib::Client> cli;
         std::string path_template;

@@ -7,6 +7,9 @@
         virtual const char* class_name() const { return static_class_name(); }    \
         static constexpr const char* static_class_name() { return (#x); }
 
+#define OHTOAI_CLIENT_REGISTER(x) \
+    static ohtoai::ProductRegistrar<ohtoai::vnotice::client, x> x##_registrar(x::static_class_name());
+
 namespace ohtoai::vnotice
 {
     class client
@@ -32,7 +35,7 @@ namespace ohtoai::vnotice
             return ohtoai::ProductFactory<client>::instance().hasProduct(_class_name);
         }
 
-        static auto get_names() {
+        static auto support_client_class_names() {
             return ohtoai::ProductFactory<client>::instance().getProductNames();
         }
     };
