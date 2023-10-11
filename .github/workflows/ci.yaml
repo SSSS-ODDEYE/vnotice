@@ -96,7 +96,7 @@ jobs:
         lcov --list ${{ steps.strings.outputs.build-output-dir }}/test/coverage.info
     - uses: checkity/upload@v1
       with:
-        file-pattern: '**/jacoco.xml,**/lcov.info'
+        file-pattern: '**/coverage.info'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
