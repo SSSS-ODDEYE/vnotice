@@ -96,6 +96,8 @@ jobs:
         lcov --list ${{ steps.strings.outputs.build-output-dir }}/test/coverage.info
     - uses: checkity/upload@v1
       with:
+        badge-enabled: true
+        badge-token: cov
         file-pattern: '**/coverage.info'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Setup tmate session
