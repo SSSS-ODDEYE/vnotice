@@ -46,6 +46,7 @@ jobs:
       run: |
         unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
         echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=${unix_workspace_path}/build/test" >> "$GITHUB_OUTPUT"
         echo "build-parallel=8" >> "$GITHUB_OUTPUT"
     - name: Config
       shell: bash
@@ -58,7 +59,7 @@ jobs:
     - name: Test
       shell: bash
       run: |
-        ctest --build-config ${{ matrix.build_type }} --test-dir ${{ steps.strings.outputs.build-output-dir }} --output-on-failure
+        ctest --build-config ${{ matrix.build_type }} --test-dir ${{ steps.strings.outputs.test-output-dir }} --output-on-failure
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
@@ -83,6 +84,7 @@ jobs:
       run: |
         unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
         echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=${unix_workspace_path}/build/test" >> "$GITHUB_OUTPUT"
         echo "build-parallel=8" >> "$GITHUB_OUTPUT"
     - name: Setup LCOV
       uses: hrishikesh-kadam/setup-lcov@v1
@@ -97,7 +99,7 @@ jobs:
     - name: Generate code coverage report
       shell: bash
       run: |
-        lcov --list ${{ steps.strings.outputs.build-output-dir }}/test/coverage.info
+        lcov --list ${{ steps.strings.outputs.test-output-dir }}/coverage.info
     - uses: checkity/upload@v1
       with:
         badge-enabled: true
@@ -128,6 +130,7 @@ jobs:
       run: |
         unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
         echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=${unix_workspace_path}/build/test" >> "$GITHUB_OUTPUT"
         echo "build-parallel=8" >> "$GITHUB_OUTPUT"
     - name: Config
       shell: bash

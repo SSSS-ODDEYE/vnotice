@@ -2,7 +2,7 @@
 #include "client/client.h"
 
 TEST_CASE("Verify all excepted client types are self-registered") {
-    std::vector<std::string> excepted_client_names = {"http_robot_client", "qywechat_client", "feishu_client"};
+    std::vector<std::string> excepted_client_names = {"http_client", "qywechat_client", "feishu_client"};
     auto client_names = ohtoai::vnotice::client::support_client_class_names();
 
     REQUIRE(client_names.size() == excepted_client_names.size());
