@@ -22,6 +22,10 @@ set(SOURCE_FOLDER ${PROJECT_SOURCE_DIR}/src)
 if(WINDOWS)
     set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL" "C:/Program Files/OpenSSL-Win64" CACHE STRING "openssl root" FORCE)
 endif(WINDOWS)
+if (CMAKE_BUILD_TYPE MATCHES Debug)
+    add_compile_definitions(_DEBUG)
+endif()
+
 
 find_package(OpenSSL QUIET)
 find_package(Threads REQUIRED)

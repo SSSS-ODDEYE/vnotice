@@ -3,10 +3,15 @@
 #include <factory.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-#define OHTOAI_DEFINE_CLASS(x)                                                    \
-    public:                                                                       \
-        virtual const char* class_name() const { return static_class_name(); }    \
-        static constexpr const char* static_class_name() { return (#x); }
+#define OHTOAI_DEFINE_CLASS(x)                                                      \
+    public:                                                                         \
+        virtual const char* class_name() const { return static_class_name(); }      \
+        static constexpr const char* static_class_name() { return (#x); }           \
+        static auto logger() {                                                      \
+            static auto _logger = spdlog::stdout_color_mt(static_class_name());     \
+            return _logger;                                                         \
+        }
+
 
 #define OHTOAI_CLIENT_REGISTER(x) \
     static ohtoai::ProductRegistrar<ohtoai::vnotice::client, x> x##_registrar(x::static_class_name());
@@ -27,11 +32,6 @@ namespace ohtoai::vnotice
         /// @param m specify the message template
         /// @param d data from runtime
         virtual void send(const robot &r, const message_template &m, const nlohmann::json &d) = 0;
-
-        auto logger() {
-            static auto _logger = spdlog::stdout_color_mt(class_name());
-            return _logger;
-        }
 
         template <typename T = client>
         static auto create(const std::string& _class_name) {

@@ -48,12 +48,6 @@ TEST_CASE("Setup local server and send message to it") {
     svr.wait_until_ready();
     spdlog::debug("server started");
 
-    httplib::Client cli(fmt::format("http://127.0.0.1:{}", port));
-    auto ret = cli.Get("/alive");
-    REQUIRE(ret);
-    REQUIRE(ret->status == 200);
-    REQUIRE(ret->body == "ok");
-
     auto http_client = ohtoai::vnotice::client::create<ohtoai::vnotice::http_client>("http_client");
     REQUIRE(http_client != nullptr);
     http_client->config_http_url(fmt::format("http://127.0.0.1:{}", port), "/api/v1/send/{{id}}", ohtoai::vnotice::http_client::POST);

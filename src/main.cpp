@@ -1,5 +1,6 @@
 #include <argparse/argparse.hpp>
 #include <spdlog/fmt/fmt.h>
+#include <spdlog/spdlog.h>
 #include <version.h>
 #include "client/client.h"
 
@@ -18,6 +19,11 @@
 
 int main(int argc, char **argv)
 {
+#ifdef _DEBUG
+    spdlog::set_level(spdlog::level::debug);
+    spdlog::debug("Debug Option Enabled.");
+#endif // _DEBUG
+
     argparse::ArgumentParser program(VersionHelper::getInstance().AppName, VersionHelper::getInstance().Version);
 
     program.add_description(VersionHelper::getInstance().Description);
@@ -68,13 +74,24 @@ int main(int argc, char **argv)
     auto names = ohtoai::vnotice::client::support_client_class_names();
     fmt::print("clients = {}\n", fmt::join(names, ", "));
 
-    auto robot = ohtoai::vnotice::client::create("feishu_client");
-    if (robot == nullptr) {
-        fmt::print(stderr, "Robot type not found\n");
+    auto client = ohtoai::vnotice::client::create("feishu_client");
+    if (client == nullptr) {
+        fmt::print(stderr, "Client type not found\n");
         std::exit(1);
     }
 
-    fmt::print("robot.class_name = {}\n", robot->class_name());
-    robot->send({}, {}, {});
+    fmt::print("client.class_name = {}\n", client->class_name());
+    ohtoai::vnotice::robot robot;
+    robot.id = "test-robot-id";
+    robot.alias = "test-robot-alias";
+    robot.type = "test-robot-type";
+
+    ohtoai::vnotice::message_template message_template;
+    message_template.alias = "test-message-alias";
+    message_template.content = "test-message-content";
+    message_template.type = "test-message-type";
+
+    auto data = nlohmann::json{{"test-data-key", "test-data-value"}};
+    client->send(robot, message_template, data);
     return 0;
 }
