@@ -22,6 +22,9 @@ foreach (test_file ${test_files})
     endif(OPENSSL_FOUND)
     target_link_libraries(${test_name} PRIVATE Threads::Threads)
     target_link_libraries(${test_name} PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,client>")
+    target_compile_options(${test_name} 
+        PRIVATE 
+        $<$<CXX_COMPILER_ID:MSVC>:/bigobj>) 
     add_test(NAME ${test_name} COMMAND ${test_name})
     list(APPEND test_list ${test_name})
 endforeach ()
