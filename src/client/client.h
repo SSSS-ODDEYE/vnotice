@@ -4,6 +4,7 @@
 #include <spdlog/spdlog-inl.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+#if defined(_DEBUG)
 #define OHTOAI_DEFINE_CLASS(x)                                                                  \
     public:                                                                                     \
         virtual const char* class_name() const { return static_class_name(); }                  \
@@ -14,14 +15,29 @@
                 if (logger == nullptr) {                                                        \
                     logger = spdlog::stdout_color_mt(logger_name);                              \
                 }                                                                               \
-                if (_DEBUG && SPDLOG_ACTIVE_LEVEL > SPDLOG_LEVEL_DEBUG && logger != nullptr) {  \
+                if (SPDLOG_ACTIVE_LEVEL > SPDLOG_LEVEL_DEBUG && logger != nullptr) {  \
                     logger->set_level(spdlog::level::debug);                                    \
                 }                                                                               \
                 return logger;                                                                  \
                 }(static_class_name());                                                         \
             return _logger;                                                                     \
         }
-
+#else
+#define OHTOAI_DEFINE_CLASS(x)                                                                  \
+    public:                                                                                     \
+        virtual const char* class_name() const { return static_class_name(); }                  \
+        static constexpr const char* static_class_name() { return (#x); }                       \
+        static auto logger() {                                                                  \
+            static auto _logger = [](const std::string& logger_name){                           \
+                auto logger = spdlog::get(logger_name);                                         \
+                if (logger == nullptr) {                                                        \
+                    logger = spdlog::stdout_color_mt(logger_name);                              \
+                }                                                                               \
+                return logger;                                                                  \
+                }(static_class_name());                                                         \
+            return _logger;                                                                     \
+        }
+#endif
 
 #define OHTOAI_CLIENT_REGISTER(x) \
     static ohtoai::ProductRegistrar<ohtoai::vnotice::client, x> x##_registrar(x::static_class_name());
