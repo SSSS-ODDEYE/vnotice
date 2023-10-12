@@ -1,16 +1,37 @@
 #include "http_client.h"
 #include <spdlog/spdlog.h>
 #include <inja/inja.hpp>
+#include <regex>
 
 namespace ohtoai::vnotice {
     OHTOAI_CLIENT_REGISTER(http_client)
 }
 
-void ohtoai::vnotice::http_client::config_http_url(const std::string &scheme_host_port, const std::string &path_template, HTTP_METHOD method) {
-    this->scheme_host_port = scheme_host_port;
-    this->path_template = path_template;
-    this->method = method;
-    cli = std::make_shared<httplib::Client>(scheme_host_port.c_str());
+void ohtoai::vnotice::http_client::config_http_url(const std::string &url_template, HTTP_METHOD method) {
+    logger()->debug("call {} (\n\turl_template: {}, \n\tmethod: {})", __func__, url_template, static_cast<int>(method));
+
+    // check url
+    {
+        std::regex re(R"(^(((https?):\/\/)?([^:\/]+)(:([0-9]+))?)(\/(.*)))");
+        std::smatch m;
+        if (!std::regex_search(url_template, m, re)) {
+            logger()->error("Invalid url: {}", url_template);
+            return;
+        }
+        this->scheme_host_port = m[1].str();
+        this->path_template = m[7].str();
+        this->method = method;
+        logger()->debug("scheme_host_port: {}", scheme_host_port);
+    }
+
+    cli = std::make_shared<httplib::Client>(scheme_host_port);
+    if (cli->is_valid()) {
+        logger()->info("Client url: {}", scheme_host_port);
+    }
+    else {
+        logger()->error("Invalid url: {}", scheme_host_port);
+    }
+
     cli->set_logger([this](const httplib::Request &req, const httplib::Response &res) {
         if (res.status == 200) {
             logger()->debug("{} | {} | {}", res.status, req.method, req.path);

@@ -3,9 +3,16 @@
 #include <spdlog/spdlog.h>
 #include "client/http_client.h"
 
+static auto _init = []{
+    auto logger = spdlog::stdout_color_mt("test");
+    spdlog::set_default_logger(logger);
+    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_pattern("[%H:%M:%S.%e] %^%L%$ %t [%n] | %v");
+    return logger;
+}();
+
 TEST_CASE("Setup local server and send message to it") {
     httplib::Server svr;
-    spdlog::set_level(spdlog::level::debug);
     std::atomic_bool message_received {false};
 
     ohtoai::vnotice::robot robot;
@@ -21,7 +28,15 @@ TEST_CASE("Setup local server and send message to it") {
     auto data = nlohmann::json{{"test-data-key", "test-data-value"}};
 
     svr.set_logger([](const httplib::Request &req, const httplib::Response &res) {
-        spdlog::debug("svr {} {} {}", req.method, req.path, res.status);
+        if (res.status == 200) {
+            spdlog::debug("{} | {} | {}", res.status, req.method, req.path);
+        }
+        else if (res.status > 200 && res.status < 300) {
+            spdlog::warn("{} | {} | {}", res.status, req.method, req.path);
+        }
+        else {
+            spdlog::error("{} | {} | {}\n\t{}", res.status, req.method, req.path, res.body);
+        }
     });
 
     svr.Post("/api/v1/send/:robot_id", [&message_received, &robot, &message_template](const httplib::Request &req, httplib::Response &res) {
@@ -50,7 +65,9 @@ TEST_CASE("Setup local server and send message to it") {
 
     auto http_client = ohtoai::vnotice::client::create<ohtoai::vnotice::http_client>("http_client");
     REQUIRE(http_client != nullptr);
-    http_client->config_http_url(fmt::format("http://127.0.0.1:{}", port), "/api/v1/send/{{id}}", ohtoai::vnotice::http_client::POST);
+    auto scheme_host_port = fmt::format("http://127.0.0.1:{}/api/v1/send/{{{{id}}}}", port);
+    spdlog::debug("http client url: {}", scheme_host_port);
+    http_client->config_http_url(scheme_host_port, ohtoai::vnotice::http_client::POST);
     spdlog::debug("http client configured");
 
     http_client->send(robot, message_template, data);
@@ -65,7 +82,9 @@ TEST_CASE("Setup local server and send message to it") {
     }
     REQUIRE(message_received);
     svr.stop();
-    if (t.joinable()) {
-        t.join();
+    while (svr.is_running()) {
+        spdlog::debug("waiting for server to stop");
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+    t.join();
 }

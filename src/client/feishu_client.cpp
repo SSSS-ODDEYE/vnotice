@@ -7,7 +7,7 @@ namespace ohtoai::vnotice {
     private:
     public:
         feishu_client() {
-            config_http_url("https://open.feishu.cn", "/open-apis/bot/v2/hook/{{id}}");
+            config_http_url("https://open.feishu.cn/open-apis/bot/v2/hook/{{id}}");
         }
     };
     OHTOAI_CLIENT_REGISTER(feishu_client)

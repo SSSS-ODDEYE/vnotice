@@ -74,14 +74,6 @@ add_subdirectory(client)
 # Build the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-if(WINDOWS)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
-endif(WINDOWS)
-
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG)
-endif()
 # Add include directories
 target_include_directories(${PROJECT_NAME} PRIVATE inc)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/generated/inc)

@@ -19,9 +19,9 @@ namespace ohtoai::vnotice {
     public:
 
         /// @brief set http url of robot
-        /// @param scheme_host_port e.g.: https://qyapi.weixin.qq.com
-        /// @param path_template e.g.: /cgi-bin/webhook/send?key={robot.id}
-        void config_http_url(const std::string &scheme_host_port, const std::string &path_template, HTTP_METHOD method = POST);
+        /// @param url_template e.g.: https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={{id}}
+        /// @param method http method GET/POST
+        void config_http_url(const std::string &url_template, HTTP_METHOD method = POST);
 
         /// @brief Send message to robot
         /// @param r robot

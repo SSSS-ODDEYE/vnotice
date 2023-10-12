@@ -20,9 +20,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCE_FOLDER ${PROJECT_SOURCE_DIR}/src)
 if(WINDOWS)
     set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL" "C:/Program Files/OpenSSL-Win64" CACHE STRING "openssl root" FORCE)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN)
+    add_compile_definitions(NOMINMAX)
 endif(WINDOWS)
 if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_definitions(_DEBUG)
+    add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG)
 endif()
 
 

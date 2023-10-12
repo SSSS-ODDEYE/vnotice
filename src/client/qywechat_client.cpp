@@ -9,7 +9,7 @@ namespace ohtoai::vnotice
     private:
     public:
         qywechat_client() {
-            config_http_url("https://qyapi.weixin.qq.com", "/cgi-bin/webhook/send?key={{id}}");
+            config_http_url("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={{id}}");
         }
         void send(const robot &r, const message_template &m, const nlohmann::json &d) override {
             logger()->debug("call {} (\n\trobot: {}, \n\tmessage: {}, \n\tdata: {})", __func__, nlohmann::json(r).dump(), nlohmann::json(m).dump(), nlohmann::json(d).dump());
