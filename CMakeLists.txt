@@ -23,7 +23,7 @@ if(WINDOWS)
     set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL" "C:/Program Files/OpenSSL-Win64" CACHE STRING "openssl root" FORCE)
 endif(WINDOWS)
 
-find_package(OpenSSL REQUIRED)
+find_package(OpenSSL QUIET)
 find_package(Threads REQUIRED)
 
 # include top level include directory
