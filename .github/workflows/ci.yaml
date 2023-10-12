@@ -27,7 +27,7 @@ on:
 
 jobs:
   build:
-    name: ${{ matrix.build_target }} - ${{ matrix.os }} - build
+    name: ${{ matrix.build_target }}.${{ matrix.build_type }} - ${{ matrix.os }} - build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -65,7 +65,7 @@ jobs:
       if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
   coverage:
-    name: ${{ matrix.build_target }} - ${{ matrix.os }} - build
+    name: ${{ matrix.build_target }}.${{ matrix.build_type }} - ${{ matrix.os }} - build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -111,7 +111,7 @@ jobs:
       if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
   package:
-    name: ${{ matrix.build_target }} - ${{ matrix.os }} - build
+    name: ${{ matrix.build_target }}.${{ matrix.build_type }} - ${{ matrix.os }} - build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
