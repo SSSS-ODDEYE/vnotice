@@ -34,5 +34,7 @@ find_package(Threads REQUIRED)
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # set the output directory for the build executables and libraries
+
+add_subdirectory(3rd/scnlib)
 add_subdirectory(src)
 add_subdirectory(test)

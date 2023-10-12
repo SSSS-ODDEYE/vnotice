@@ -55,8 +55,6 @@ string(REPLACE "-" "_" PROJECT_NAME_VAR ${PROJECT_NAME_VAR})
 # platform specific settings
 if(WINDOWS)
     set(BINARY_PATH "bin/${PROJECT_NAME}.exe")
-    add_definitions(-DWIN32_LEAN_AND_MEAN)
-    add_definitions(-DNOMINMAX)
 else()
     set(BINARY_PATH "bin/${PROJECT_NAME}")
 endif()
@@ -76,6 +74,11 @@ add_subdirectory(client)
 # Build the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+if(WINDOWS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE WIN32_LEAN_AND_MEAN)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX)
+endif(WINDOWS)
+
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(${PROJECT_NAME} PRIVATE SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG)
 endif()
@@ -88,6 +91,7 @@ if(OPENSSL_FOUND)
     target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif(OPENSSL_FOUND)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE scn::scn)
 target_link_libraries(${PROJECT_NAME} PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,client>")
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)

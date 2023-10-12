@@ -2,6 +2,7 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 #include <version.h>
+#include <scn/scn.h>
 #include "client/client.h"
 
 /**
