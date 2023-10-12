@@ -6,28 +6,49 @@ namespace ohtoai::vnotice {
     OHTOAI_CLIENT_REGISTER(http_client)
 }
 
-void ohtoai::vnotice::http_client::config_http_url(const std::string &scheme_host_port, const std::string &path_template) {
-    SPDLOG_DEBUG("http_client::config_http_url");
-    cli = std::make_unique<httplib::Client>(scheme_host_port.c_str());
+void ohtoai::vnotice::http_client::config_http_url(const std::string &scheme_host_port, const std::string &path_template, HTTP_METHOD method) {
+    logger()->debug("call {} (scheme_host_port: {}, path_template: {}, method: {})", __func__, scheme_host_port, path_template, method == GET ? "GET" : "POST)");
+    this->scheme_host_port = scheme_host_port;
     this->path_template = path_template;
+    this->method = method;
+    cli = std::make_shared<httplib::Client>(scheme_host_port.c_str());
+    cli->set_logger([this](const httplib::Request &req, const httplib::Response &res) {
+        logger()->debug("{} {} {}", req.method, req.path, res.status);
+    });
 }
 
 void ohtoai::vnotice::http_client::send(const robot &r, const message_template &m, const nlohmann::json &d) {
-    SPDLOG_DEBUG("http_client::send: robot: {}", nlohmann::json(r).dump());
-    SPDLOG_DEBUG("http_client::send: message: {}", nlohmann::json(m).dump());
-    SPDLOG_DEBUG("http_client::send: data: {}", nlohmann::json(d).dump());
+    logger()->debug("call {} (\n\trobot: {}, \n\tmessage: {}, \n\tdata: {})", __func__, nlohmann::json(r).dump(), nlohmann::json(m).dump(), nlohmann::json(d).dump());
 
     if (cli == nullptr) {
-        spdlog::error("http_client::send: cli is nullptr");
+        logger()->error("{}: cli is nullptr", __func__);
         return;
     }
 
-    auto ret = cli->Post(inja::render(path_template, r).c_str(), inja::render(m.content, d), "application/json");
+    auto path = inja::render(path_template, r);
+    httplib::Result ret;
+
+    switch (method) {
+        case GET:
+            logger()->debug("{}: GET {}:{} {}", __func__, cli->host(), cli->port(), path);
+            ret = cli->Get(path);
+            break;
+        case POST:
+        {
+            auto body = inja::render(m.content, d);
+            logger()->debug("{}: POST {}:{} {}, {}", __func__, cli->host(), cli->port(), path, body);
+            ret = cli->Post(path, body, "application/json");
+            break;
+        }
+        default:
+            logger()->error("{}: unknown method: {}", __func__, (int)method);
+            break;
+    }
     if(ret) {
-        spdlog::info("http_client::send: status_code: {}", ret->status);
-        spdlog::info("http_client::send: body: {}", ret->body);
+        logger()->info("{}: status_code: {}", __func__, ret->status);
+        logger()->info("{}: body: \"{}\"", __func__, ret->body);
     }
     else {
-        spdlog::error("http_client::send: ret is nullptr");
+        logger()->error("{}: ret is nullptr", __func__);
     }
 }

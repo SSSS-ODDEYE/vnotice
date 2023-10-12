@@ -1,6 +1,7 @@
 #include <robot.h>
 #include <message_template.h>
 #include <factory.hpp>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #define OHTOAI_DEFINE_CLASS(x)                                                    \
     public:                                                                       \
@@ -27,8 +28,14 @@ namespace ohtoai::vnotice
         /// @param d data from runtime
         virtual void send(const robot &r, const message_template &m, const nlohmann::json &d) = 0;
 
+        auto logger() {
+            static auto _logger = spdlog::stdout_color_mt(class_name());
+            return _logger;
+        }
+
+        template <typename T = client>
         static auto create(const std::string& _class_name) {
-            return ohtoai::ProductFactory<client>::instance().product(_class_name);
+            return std::dynamic_pointer_cast<T>(ohtoai::ProductFactory<client>::instance().product(_class_name));
         }
 
         static auto has(const std::string& _class_name) {

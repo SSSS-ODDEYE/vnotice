@@ -7,11 +7,7 @@ namespace ohtoai::vnotice {
     private:
     public:
         feishu_client() {
-            config_http_url("https://open.feishu.cn", "/open-apis/bot/v2/hook/{robot.id}");
-        }
-        void send(const robot &r, const message_template &m, const nlohmann::json &d) override {
-            spdlog::info("feishu_client::send: robot: {}", nlohmann::json(r).dump());
-            http_client::send(r, m, d);
+            config_http_url("https://open.feishu.cn", "/open-apis/bot/v2/hook/{{id}}");
         }
     };
     OHTOAI_CLIENT_REGISTER(feishu_client)
