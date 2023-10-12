@@ -43,19 +43,19 @@ int main(int argc, char **argv)
     robot_command.add_subparser(robot_remove_command);
     robot_command.add_subparser(robot_update_command);
 
-    argparse::ArgumentParser execute_command("exec", "", argparse::default_arguments::help);
-    execute_command.add_description("Execute a command");
-    execute_command.add_argument("-R", "--robot")
-                .help("Specify the robot")
-                .action([](const std::string &value) { std::cout << "Robot name: " << value << std::endl; });
-    execute_command.add_argument("command")
-                .help("Specify the command")
-                .nargs(argparse::nargs_pattern::at_least_one)
-                .remaining();
+    argparse::ArgumentParser configure_command("config", "", argparse::default_arguments::help);
+    configure_command.add_description("Configure");
+    argparse::ArgumentParser configure_robot_command("robot", "", argparse::default_arguments::help);
+    configure_robot_command.add_description("Configure robot");
+    argparse::ArgumentParser configure_message_command("message", "", argparse::default_arguments::help);
+    configure_message_command.add_description("Configure message");
+
+    configure_command.add_subparser(configure_robot_command);
+    configure_command.add_subparser(configure_message_command);
 
     program.add_subparser(send_command);
     program.add_subparser(robot_command);
-    program.add_subparser(execute_command);
+    program.add_subparser(configure_command);
 
     try {
         program.parse_args(argc, argv);
