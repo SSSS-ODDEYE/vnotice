@@ -3,7 +3,8 @@ project(test)
 
 enable_testing()
 
-add_subdirectory(${SOURCE_FOLDER}/client ${CMAKE_BINARY_DIR}/client)
+find_library(client ${SOURCE_FOLDER}/client)
+add_custom_target(${PROJECT_NAME} ALL)
 
 # Add test files
 file(GLOB test_files "*.test.cpp")
@@ -26,6 +27,7 @@ foreach (test_file ${test_files})
         PRIVATE 
         $<$<CXX_COMPILER_ID:MSVC>:/bigobj>) 
     add_test(NAME ${test_name} COMMAND ${test_name})
+    add_dependencies(${PROJECT_NAME} ${test_name})
     list(APPEND test_list ${test_name})
 endforeach ()
 

@@ -17,7 +17,6 @@ elseif(UNIX)
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR})
 set(SOURCE_FOLDER ${PROJECT_SOURCE_DIR}/src)
 if(WINDOWS)
     set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL" "C:/Program Files/OpenSSL-Win64" CACHE STRING "openssl root" FORCE)

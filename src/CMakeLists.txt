@@ -94,7 +94,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 target_link_libraries(${PROJECT_NAME} PRIVATE scn::scn)
 target_link_libraries(${PROJECT_NAME} PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,client>")
 
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} CONFIGURATIONS Release RUNTIME DESTINATION bin)
 
 # set install target
 if (LINUX OR WINDOWS)
