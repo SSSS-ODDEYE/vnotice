@@ -1,6 +1,6 @@
 #include "client.h"
 #include <memory>
-#include <cpp-httplib/httplib.h>
+#include <httplib.h>
 
 namespace httplib {
     class Client;

@@ -3,7 +3,6 @@ project(test)
 
 enable_testing()
 
-find_library(client ${SOURCE_FOLDER}/client)
 add_custom_target(${PROJECT_NAME} ALL)
 
 # Add test files
@@ -16,26 +15,29 @@ foreach (test_file ${test_files})
     target_include_directories(${test_name} PRIVATE ${CMAKE_BINARY_DIR}/src/generated/inc)
     target_include_directories(${test_name} PRIVATE ${SOURCE_FOLDER}/inc)
     target_include_directories(${test_name} PRIVATE ${SOURCE_FOLDER})
-    if(OPENSSL_FOUND)
-        target_compile_definitions(${test_name} PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
-        target_link_libraries(${test_name} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
-    endif(OPENSSL_FOUND)
-    target_link_libraries(${test_name} PRIVATE Threads::Threads)
-    target_link_libraries(${test_name} PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,client>")
-    target_compile_options(${test_name} 
-        PRIVATE 
-        $<$<CXX_COMPILER_ID:MSVC>:/bigobj>) 
+    target_link_libraries(${test_name} PRIVATE
+                "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}_client>"
+                Catch2
+                Threads::Threads
+                $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
+                $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::Crypto>
+                nlohmann_json
+                inja
+                httplib
+                argparse
+                spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+    target_compile_options(${test_name}
+        PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/bigobj>)
     add_test(NAME ${test_name} COMMAND ${test_name})
     add_dependencies(${PROJECT_NAME} ${test_name})
     list(APPEND test_list ${test_name})
 endforeach ()
 
 if(GENERATE_CODE_COVERAGE AND LINUX AND CMAKE_BUILD_TYPE MATCHES Debug)
-    include(CodeCoverage)
-    append_coverage_compiler_flags()
     setup_target_for_coverage_lcov(NAME coverage
         EXECUTABLE ctest --build-config Debug --output-on-failure
         BASE_DIRECTORY ${SOURCE_FOLDER}
-        EXCLUDE "/usr/*" "${CMAKE_SOURCE_DIR}/inc/*" "${CMAKE_SOURCE_DIR}/test/*" "${CMAKE_SOURCE_DIR}/build/*"
+        EXCLUDE "/usr/*" "${CMAKE_SOURCE_DIR}/inc/*" "${CMAKE_SOURCE_DIR}/test/*" "${CMAKE_SOURCE_DIR}/build/*" "${CMAKE_SOURCE_DIR}/3rd/*"
         DEPENDENCIES ${test_list})
 endif(GENERATE_CODE_COVERAGE AND LINUX AND CMAKE_BUILD_TYPE MATCHES Debug)

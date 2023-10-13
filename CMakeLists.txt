@@ -17,7 +17,7 @@ elseif(UNIX)
 endif()
 
 set(CMAKE_CXX_STANDARD 17)
-set(SOURCE_FOLDER ${PROJECT_SOURCE_DIR}/src)
+set(SOURCE_FOLDER ${PROJECT_SOURCE_DIR}/src CACHE STRING "Source folder")
 if(WINDOWS)
     set(OPENSSL_ROOT_DIR "C:/Program Files/OpenSSL" "C:/Program Files/OpenSSL-Win64" CACHE STRING "openssl root" FORCE)
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
@@ -28,6 +28,10 @@ if (CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG)
 endif()
 
+if(GENERATE_CODE_COVERAGE AND LINUX AND CMAKE_BUILD_TYPE MATCHES Debug)
+    include(CodeCoverage)
+    append_coverage_compiler_flags()
+endif(GENERATE_CODE_COVERAGE AND LINUX AND CMAKE_BUILD_TYPE MATCHES Debug)
 
 find_package(OpenSSL QUIET)
 find_package(Threads REQUIRED)
@@ -37,6 +41,6 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # set the output directory for the build executables and libraries
 
-add_subdirectory(3rd/scnlib)
+add_subdirectory(3rd)
 add_subdirectory(src)
 add_subdirectory(test)

@@ -78,13 +78,17 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE inc)
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/generated/inc)
 
-if(OPENSSL_FOUND)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
-    target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
-endif(OPENSSL_FOUND)
-target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-target_link_libraries(${PROJECT_NAME} PRIVATE scn::scn)
-target_link_libraries(${PROJECT_NAME} PRIVATE "$<LINK_LIBRARY:WHOLE_ARCHIVE,client>")
+target_link_libraries(${PROJECT_NAME} PRIVATE
+            "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}_client>"
+            scn::scn
+            Threads::Threads
+            $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
+            $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::Crypto>
+            nlohmann_json
+            inja
+            httplib
+            argparse
+            spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 install(TARGETS ${PROJECT_NAME} CONFIGURATIONS Release RUNTIME DESTINATION bin)
 
