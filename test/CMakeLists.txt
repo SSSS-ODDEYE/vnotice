@@ -17,7 +17,7 @@ foreach (test_file ${test_files})
     target_include_directories(${test_name} PRIVATE ${SOURCE_FOLDER})
     target_link_libraries(${test_name} PRIVATE
                 "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}_client>"
-                Catch2
+                Catch2 Catch2WithMain
                 Threads::Threads
                 $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
                 $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::Crypto>

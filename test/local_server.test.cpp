@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 #include "client/http_client.h"

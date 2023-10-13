@@ -1,6 +1,8 @@
 include(FetchContent)
 
-set(INJA_USE_EMBEDDED_JSON OFF CACHE BOOL "Use embedded json library" FORCE)
+set(INJA_USE_EMBEDDED_JSON OFF CACHE BOOL "Use inja embedded json library" FORCE)
+set(INJA_BUILD_TESTS OFF CACHE BOOL "Build inja tests" FORCE)
+set(BUILD_BENCHMARK OFF CACHE BOOL "Build benchmark" FORCE)
 
 FetchContent_Declare(
     nlohmann_json

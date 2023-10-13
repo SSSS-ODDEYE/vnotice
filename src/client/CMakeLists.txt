@@ -12,7 +12,6 @@ endif()
 
 if(OPENSSL_FOUND)
     target_compile_definitions(${PROJECT_NAME} PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
-    target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif(OPENSSL_FOUND)
 target_link_libraries(${PROJECT_NAME} PRIVATE
             Threads::Threads

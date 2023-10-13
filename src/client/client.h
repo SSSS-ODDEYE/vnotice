@@ -1,7 +1,7 @@
 #include <robot.h>
 #include <message_template.h>
 #include <factory.hpp>
-#include <spdlog/spdlog-inl.h>
+#include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #if defined(_DEBUG)
