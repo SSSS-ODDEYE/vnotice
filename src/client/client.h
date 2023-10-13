@@ -1,5 +1,5 @@
-#include <robot.h>
-#include <message_template.h>
+#include "robot.h"
+#include "message_template.h"
 #include <factory.hpp>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -15,7 +15,7 @@
                 if (logger == nullptr) {                                                        \
                     logger = spdlog::stdout_color_mt(logger_name);                              \
                 }                                                                               \
-                if (SPDLOG_ACTIVE_LEVEL > SPDLOG_LEVEL_DEBUG && logger != nullptr) {  \
+                if (SPDLOG_ACTIVE_LEVEL > SPDLOG_LEVEL_DEBUG && logger != nullptr) {            \
                     logger->set_level(spdlog::level::debug);                                    \
                 }                                                                               \
                 return logger;                                                                  \

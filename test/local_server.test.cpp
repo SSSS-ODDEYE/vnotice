@@ -1,7 +1,7 @@
+#include "http_client.h"
 #include <catch2/catch_test_macros.hpp>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
-#include "client/http_client.h"
 
 static auto _init = []{
     auto logger = spdlog::stdout_color_mt("test");

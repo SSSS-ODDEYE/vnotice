@@ -39,8 +39,6 @@ find_package(Threads REQUIRED)
 # include top level include directory
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 
-# set the output directory for the build executables and libraries
-
 add_subdirectory(3rd)
 add_subdirectory(src)
 add_subdirectory(test)

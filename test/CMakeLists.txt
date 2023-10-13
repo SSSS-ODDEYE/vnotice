@@ -13,19 +13,17 @@ foreach (test_file ${test_files})
     add_executable(${test_name} ${SOURCES})
     target_compile_definitions(${test_name} PRIVATE CATCH_CONFIG_MAIN)
     target_include_directories(${test_name} PRIVATE ${CMAKE_BINARY_DIR}/src/generated/inc)
-    target_include_directories(${test_name} PRIVATE ${SOURCE_FOLDER}/inc)
-    target_include_directories(${test_name} PRIVATE ${SOURCE_FOLDER})
     target_link_libraries(${test_name} PRIVATE
-                "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}_client>"
-                Catch2 Catch2WithMain
-                Threads::Threads
-                $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
-                $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::Crypto>
-                nlohmann_json
-                inja
-                httplib
-                argparse
-                spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+        "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}_client>"
+        Catch2 Catch2WithMain
+        Threads::Threads
+        $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::SSL>
+        $<$<BOOL:${HTTPLIB_IS_USING_OPENSSL}>:OpenSSL::Crypto>
+        nlohmann_json
+        inja
+        httplib
+        argparse
+        spdlog $<$<BOOL:${MINGW}>:ws2_32>)
     target_compile_options(${test_name}
         PRIVATE
         $<$<CXX_COMPILER_ID:MSVC>:/bigobj>)

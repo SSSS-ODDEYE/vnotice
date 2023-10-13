@@ -1,5 +1,5 @@
+#include "client.h"
 #include <catch2/catch_test_macros.hpp>
-#include "client/client.h"
 
 TEST_CASE("Verify all excepted client types are self-registered") {
     std::vector<std::string> excepted_client_names = {"http_client", "qywechat_client", "feishu_client"};

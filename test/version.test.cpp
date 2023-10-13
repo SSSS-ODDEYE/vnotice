@@ -1,5 +1,5 @@
-#include <catch2/catch_test_macros.hpp>
 #include <version.h>
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("Version info not empty", "[single-file]" ) {
     REQUIRE(VersionHelper::getInstance().AppName != "");
