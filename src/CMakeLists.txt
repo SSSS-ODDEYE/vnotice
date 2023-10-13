@@ -88,6 +88,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     inja
     httplib
     argparse
+    tabulate
     spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 install(TARGETS ${PROJECT_NAME} CONFIGURATIONS Release RUNTIME DESTINATION bin)

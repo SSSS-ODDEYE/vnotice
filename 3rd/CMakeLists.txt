@@ -15,6 +15,11 @@ FetchContent_Declare(
     GIT_TAG         v2.9
 )
 FetchContent_Declare(
+    tabulate
+    GIT_REPOSITORY https://github.com/p-ranav/tabulate
+    GIT_TAG         v1.5
+)
+FetchContent_Declare(
     scnlib
     GIT_REPOSITORY https://github.com/eliaskosunen/scnlib
     GIT_TAG         v1.1.2
@@ -42,6 +47,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(nlohmann_json)
 FetchContent_MakeAvailable(argparse)
+FetchContent_MakeAvailable(tabulate)
 FetchContent_MakeAvailable(scnlib)
 FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(Catch2)
