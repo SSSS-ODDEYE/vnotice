@@ -28,5 +28,7 @@ namespace ohtoai::vnotice {
         /// @param m message
         /// @param d data
         void send(const robot &r, const message_template &m, const nlohmann::json &d) override;
+
+        std::string type() const override;
     };
 }

@@ -59,6 +59,8 @@ namespace ohtoai::vnotice
         /// @param d data from runtime
         virtual void send(const robot &r, const message_template &m, const nlohmann::json &d) = 0;
 
+        virtual std::string type() const = 0;
+
         template <typename T = client>
         static auto create(const std::string& _class_name) {
             return std::dynamic_pointer_cast<T>(ohtoai::ProductFactory<client>::instance().product(_class_name));

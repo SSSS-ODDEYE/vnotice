@@ -3,7 +3,8 @@
 #include <spdlog/spdlog.h>
 #include <version.h>
 #include <scn/scn.h>
-#include "client/client.h"
+#include <tabulate/table.hpp>
+#include "client.h"
 
 /**
  * config
@@ -73,7 +74,14 @@ int main(int argc, char **argv)
     }
 
     auto names = ohtoai::vnotice::client::support_client_class_names();
-    fmt::print("clients = {}\n", fmt::join(names, ", "));
+    tabulate::Table table;
+    table.add_row({"Name", "Type"});
+    for (auto name : names) {
+        auto test_client = ohtoai::vnotice::client::create(name);
+        table.add_row({name, test_client->type()});
+    }
+    // fmt::print("{}\n", table);
+    std::cout << table << std::endl;
 
     auto client = ohtoai::vnotice::client::create("feishu_client");
     if (client == nullptr) {

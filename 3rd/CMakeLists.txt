@@ -44,6 +44,11 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/yhirose/cpp-httplib
     GIT_TAG         v0.14.1
 )
+FetchContent_Declare(
+    eventpp
+    GIT_REPOSITORY https://github.com/wqking/eventpp
+    GIT_TAG         v0.1.3
+)
 
 FetchContent_MakeAvailable(nlohmann_json)
 FetchContent_MakeAvailable(argparse)
@@ -53,3 +58,4 @@ FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(Catch2)
 FetchContent_MakeAvailable(cpp-httplib)
 FetchContent_MakeAvailable(inja)
+FetchContent_MakeAvailable(eventpp)

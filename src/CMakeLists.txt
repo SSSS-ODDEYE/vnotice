@@ -89,6 +89,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     httplib
     argparse
     tabulate
+    eventpp
     spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 install(TARGETS ${PROJECT_NAME} CONFIGURATIONS Release RUNTIME DESTINATION bin)
