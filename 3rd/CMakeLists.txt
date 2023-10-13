@@ -49,6 +49,11 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/wqking/eventpp
     GIT_TAG         v0.1.3
 )
+FetchContent_Declare(
+    yaml-cpp
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp
+    GIT_TAG         0.8.0
+)
 
 FetchContent_MakeAvailable(nlohmann_json)
 FetchContent_MakeAvailable(argparse)
@@ -59,3 +64,4 @@ FetchContent_MakeAvailable(Catch2)
 FetchContent_MakeAvailable(cpp-httplib)
 FetchContent_MakeAvailable(inja)
 FetchContent_MakeAvailable(eventpp)
+FetchContent_MakeAvailable(yaml-cpp)

@@ -90,6 +90,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     argparse
     tabulate
     eventpp
+    yaml-cpp
     spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 install(TARGETS ${PROJECT_NAME} CONFIGURATIONS Release RUNTIME DESTINATION bin)
