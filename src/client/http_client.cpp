@@ -75,5 +75,5 @@ void ohtoai::vnotice::http_client::send(const robot &r, const message_template &
 }
 
 std::string ohtoai::vnotice::http_client::type() const {
-    return class_name();
+    return static_class_name();
 }
