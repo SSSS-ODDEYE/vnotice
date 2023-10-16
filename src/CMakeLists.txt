@@ -62,7 +62,7 @@ endif()
 # configure .in file
 configure_file(
     inc/version.h.in
-    generated/inc/version.h
+    ${CMAKE_BINARY_DIR}/inc/version.h
 )
 
 # Add source files
@@ -76,7 +76,6 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Add include directories
 target_include_directories(${PROJECT_NAME} PRIVATE inc)
-target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/generated/inc)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}_client>"

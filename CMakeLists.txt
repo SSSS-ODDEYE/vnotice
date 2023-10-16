@@ -38,6 +38,7 @@ find_package(Threads REQUIRED)
 
 # include top level include directory
 include_directories(${PROJECT_SOURCE_DIR}/inc)
+include_directories(${PROJECT_BINARY_DIR}/inc)
 
 add_subdirectory(3rd)
 add_subdirectory(src)

@@ -12,7 +12,6 @@ foreach (test_file ${test_files})
     get_filename_component(test_name ${test_file} NAME_WLE)
     add_executable(${test_name} ${SOURCES})
     target_compile_definitions(${test_name} PRIVATE CATCH_CONFIG_MAIN)
-    target_include_directories(${test_name} PRIVATE ${CMAKE_BINARY_DIR}/src/generated/inc)
     target_link_libraries(${test_name} PRIVATE
         "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}_client>"
         Catch2 Catch2WithMain
