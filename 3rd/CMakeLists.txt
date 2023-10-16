@@ -69,7 +69,7 @@ FetchContent_Declare(
     factory_method
     # URL             https://gist.github.com/ohto-ai/2165091d8f934b0852eb12d9224b0e6a/archive/b60a166d393d8fb22f4978a7cb2018c91d5cb414.zip
     GIT_REPOSITORY https://gist.github.com/2165091d8f934b0852eb12d9224b0e6a.git
-    SOURCE_DIR inc
+    SOURCE_DIR ../inc
 )
 
 FetchContent_MakeAvailable(nlohmann_json argparse tabulate scnlib spdlog Catch2 cpp-httplib inja eventpp yaml-cpp factory_method)
