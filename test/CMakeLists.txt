@@ -3,14 +3,14 @@ project(test)
 
 enable_testing()
 
-add_custom_target(${PROJECT_NAME} EXCLUDE_FROM_ALL)
+add_custom_target(${PROJECT_NAME})
 
 # Add test files
 file(GLOB test_files "*.test.cpp")
 foreach (test_file ${test_files})
     set(SOURCES ${test_file})
     get_filename_component(test_name ${test_file} NAME_WLE)
-    add_executable(${test_name} EXCLUDE_FROM_ALL ${SOURCES})
+    add_executable(${test_name} ${SOURCES})
     target_compile_definitions(${test_name} PRIVATE CATCH_CONFIG_MAIN)
     target_link_libraries(${test_name} PRIVATE
         "$<LINK_LIBRARY:WHOLE_ARCHIVE,${ProjectId}::client>"
