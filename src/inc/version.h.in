@@ -1,0 +1,33 @@
+#pragma once
+#ifndef _@PROJECT_NAME_VAR@_VERSION_H_
+#define _@PROJECT_NAME_VAR@_VERSION_H_
+
+#include <string>
+
+class VersionHelper
+{
+private:
+    VersionHelper() {}
+    VersionHelper(const VersionHelper &) = delete;
+    VersionHelper &operator=(const VersionHelper &) = delete;
+public:
+    static VersionHelper &getInstance()
+    {
+        static VersionHelper instance;
+        return instance;
+    }
+
+    const std::string AppName = "@PROJECT_NAME@";
+    const std::string Author = "@PROJECT_MAINTAINER@";
+    const std::string Email = "@PROJECT_CONTACT@";
+    const std::string Description = "@PROJECT_DESCRIPTION@";
+    const std::string Homepage = "@PROJECT_HOMEPAGE@";
+    const std::string Version = "@PROJECT_VERSION@";
+    const std::string GitDescribe = "@GIT_DESCRIBE@";
+    const std::string GitSha1 = "@GIT_SHA1@";
+    const std::string GitRefSpec = "@GIT_REFSPEC@";
+    const std::string BuildDate = __DATE__;
+    const std::string BuildTime = __TIME__;
+};
+
+#endif // !_@PROJECT_NAME_VAR@_VERSION_H_

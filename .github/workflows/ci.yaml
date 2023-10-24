@@ -1,0 +1,145 @@
+name: Cross-platform CI
+
+on:
+  push:
+    paths:
+      - '.github/workflows/ci.yaml'
+      - 'src/**'
+      - 'inc/**'
+      - 'test/**'
+      - 'CMakeLists.txt'
+      - '*.cmake'
+  pull_request:
+    paths:
+      - '.github/workflows/ci.yaml'
+      - 'src/**'
+      - 'inc/**'
+      - 'test/**'
+      - 'CMakeLists.txt'
+      - '*.cmake'
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+
+jobs:
+  build:
+    name: ${{ matrix.build_target }}.${{ matrix.build_type }} - ${{ matrix.os }} - build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022]
+        build_type: [Debug, Release]
+        build_target: [test]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+        fetch-depth: 0
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
+        echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=${unix_workspace_path}/build/test" >> "$GITHUB_OUTPUT"
+        echo "build-parallel=8" >> "$GITHUB_OUTPUT"
+    - name: Config
+      shell: bash
+      run: |
+        cmake -B${{ steps.strings.outputs.build-output-dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_INSTALL_PREFIX=$(pwd)
+    - name: Build
+      shell: bash
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target ${{ matrix.build_target }} -j${{ steps.strings.outputs.build-parallel }}
+    - name: Test
+      shell: bash
+      run: |
+        ctest --build-config ${{ matrix.build_type }} --test-dir ${{ steps.strings.outputs.test-output-dir }} --output-on-failure
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
+  coverage:
+    name: ${{ matrix.build_target }}.${{ matrix.build_type }} - ${{ matrix.os }} - build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+        build_type: [Debug]
+        build_target: [coverage]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+        fetch-depth: 0
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
+        echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=${unix_workspace_path}/build/test" >> "$GITHUB_OUTPUT"
+        echo "build-parallel=8" >> "$GITHUB_OUTPUT"
+    - name: Setup LCOV
+      uses: hrishikesh-kadam/setup-lcov@v1
+    - name: Config
+      shell: bash
+      run: |
+        cmake -B${{ steps.strings.outputs.build-output-dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DGENERATE_CODE_COVERAGE=ON
+    - name: Build
+      shell: bash
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target ${{ matrix.build_target }} -j${{ steps.strings.outputs.build-parallel }}
+    - name: Generate code coverage report
+      shell: bash
+      run: |
+        lcov --list ${{ steps.strings.outputs.test-output-dir }}/coverage.info
+    - uses: checkity/upload@v1
+      with:
+        badge-enabled: true
+        badge-token: cov
+        file-pattern: '**/coverage.info'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
+  package:
+    name: ${{ matrix.build_target }}.${{ matrix.build_type }} - ${{ matrix.os }} - build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, windows-2022]
+        build_type: [Release]
+        build_target: [package]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: 'true'
+        fetch-depth: 0
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        unix_workspace_path=$(echo "${{ github.workspace }}" | sed 's/\\/\//g')
+        echo "build-output-dir=${unix_workspace_path}/build" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=${unix_workspace_path}/build/test" >> "$GITHUB_OUTPUT"
+        echo "build-parallel=8" >> "$GITHUB_OUTPUT"
+    - name: Config
+      shell: bash
+      run: |
+        cmake -B${{ steps.strings.outputs.build-output-dir }} -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+    - name: Build
+      shell: bash
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --target ${{ matrix.build_target }} -j${{ steps.strings.outputs.build-parallel }}
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
+      if: ${{ failure() || github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}

@@ -1,0 +1,30 @@
+[submodule "3rd/nlohmann_json"]
+	path = 3rd/nlohmann_json
+	url = https://github.com/nlohmann/json
+[submodule "3rd/argparse"]
+	path = 3rd/argparse
+	url = https://github.com/p-ranav/argparse
+[submodule "3rd/tabulate"]
+	path = 3rd/tabulate
+	url = https://github.com/p-ranav/tabulate
+[submodule "3rd/scnlib"]
+	path = 3rd/scnlib
+	url = https://github.com/eliaskosunen/scnlib
+[submodule "3rd/spdlog"]
+	path = 3rd/spdlog
+	url = https://github.com/gabime/spdlog
+[submodule "3rd/Catch2"]
+	path = 3rd/Catch2
+	url = https://github.com/catchorg/Catch2
+[submodule "3rd/inja"]
+	path = 3rd/inja
+	url = https://github.com/pantor/inja
+[submodule "3rd/cpp-httplib"]
+	path = 3rd/cpp-httplib
+	url = https://github.com/yhirose/cpp-httplib
+[submodule "3rd/eventpp"]
+	path = 3rd/eventpp
+	url = https://github.com/wqking/eventpp
+[submodule "3rd/yaml-cpp"]
+	path = 3rd/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp

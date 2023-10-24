@@ -4,21 +4,21 @@
 
 # vnotice  
 
-[circleci]: https://app.circleci.com/pipelines/github/Ohto-Ai/vnotice
-[issues]: https://github.com/Ohto-Ai/vnotice/issues
-[stargazers]: https://github.com/Ohto-Ai/vnotice/stargazers
-[pulls]: https://github.com/Ohto-Ai/vnotice/pulls
-[commit-activity]: https://github.com/Ohto-Ai/vnotice/pulse
-[contributors]: https://github.com/Ohto-Ai/vnotice/contributors
-[use-this]: https://github.com/Ohto-Ai/vnotice/generate
-[circleci:badge]: https://img.shields.io/circleci/project/github/Ohto-Ai/vnotice/master
-[license:badge]: https://img.shields.io/github/license/Ohto-Ai/vnotice?style=for-the-badge&logo=github
-[issues:badge]: https://img.shields.io/github/issues/Ohto-Ai/vnotice?style=for-the-badge&logo=github
-[stargazers:badge]: https://img.shields.io/github/stars/Ohto-Ai/vnotice?style=for-the-badge&logo=github
-[pulls:badge]: https://img.shields.io/github/issues-pr/Ohto-Ai/vnotice?logo=github&style=for-the-badge&color=0088ff
-[contributors:badge]: https://img.shields.io/github/contributors/Ohto-Ai/vnotice?style=for-the-badge&logo=github
-[commit-activity:badge]: https://img.shields.io/github/commit-activity/m/Ohto-Ai/vnotice?style=for-the-badge&logo=github
-[repository]: https://github.com/Ohto-Ai/vnotice
+[circleci]: https://app.circleci.com/pipelines/github/SSSS-ODDEYE/vnotice
+[issues]: https://github.com/SSSS-ODDEYE/vnotice/issues
+[stargazers]: https://github.com/SSSS-ODDEYE/vnotice/stargazers
+[pulls]: https://github.com/SSSS-ODDEYE/vnotice/pulls
+[commit-activity]: https://github.com/SSSS-ODDEYE/vnotice/pulse
+[contributors]: https://github.com/SSSS-ODDEYE/vnotice/contributors
+[use-this]: https://github.com/SSSS-ODDEYE/vnotice/generate
+[circleci:badge]: https://img.shields.io/circleci/project/github/SSSS-ODDEYE/vnotice/master
+[license:badge]: https://img.shields.io/github/license/SSSS-ODDEYE/vnotice?style=for-the-badge&logo=github
+[issues:badge]: https://img.shields.io/github/issues/SSSS-ODDEYE/vnotice?style=for-the-badge&logo=github
+[stargazers:badge]: https://img.shields.io/github/stars/SSSS-ODDEYE/vnotice?style=for-the-badge&logo=github
+[pulls:badge]: https://img.shields.io/github/issues-pr/SSSS-ODDEYE/vnotice?logo=github&style=for-the-badge&color=0088ff
+[contributors:badge]: https://img.shields.io/github/contributors/SSSS-ODDEYE/vnotice?style=for-the-badge&logo=github
+[commit-activity:badge]: https://img.shields.io/github/commit-activity/m/SSSS-ODDEYE/vnotice?style=for-the-badge&logo=github
+[repository]: https://github.com/SSSS-ODDEYE/vnotice
 
 [![License][license:badge]](/LICENSE)
 [![Issues][issues:badge]][issues]  
@@ -37,7 +37,7 @@ vnotice是一个企业微信机器人消息推送脚本
 ## Installation
 请替换ROBOT_ID为你的机器人ID
 ```bash
-git clone git@github.com:Ohto-Ai/vnotice
+git clone git@github.com:SSSS-ODDEYE/vnotice
 make install ROBOT_ID=XXXX-XXXX-XXXX-XXXX
 ```
 ### 如何获取一个机器人并拿到ID？
